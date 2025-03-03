@@ -3,6 +3,8 @@ import Board.Board
 import kotlin.math.sign
 
 class Rook(override val position: Int, override val colour: Boolean, override val board: Board): Figure {
+    var noMoved = true
+
     override fun isThereFigure(location: Int): Boolean {
         return location in board.positions
     }
@@ -24,6 +26,7 @@ class Rook(override val position: Int, override val colour: Boolean, override va
                 if (isThereFigure(newPosition) && board.positions[newPosition]?.colour == colour) return false
                 board.positions[newPosition] = this
                 board.positions.remove(position)
+                noMoved = false
                 return true
             }
         }
