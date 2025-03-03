@@ -3,7 +3,9 @@ import Board.Board
 import kotlin.math.abs
 
 class King(override val position: Int, override val colour: Boolean, override val board: Board): Figure {
-    var noMoved = true
+    init {
+        board.positions[position] = this
+    }
 
     override fun isThereFigure(location: Int): Boolean {
         return location in board.positions

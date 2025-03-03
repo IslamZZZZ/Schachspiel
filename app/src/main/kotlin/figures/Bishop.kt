@@ -3,6 +3,10 @@ import Board.Board
 import kotlin.math.sign
 
 class Bishop(override val position: Int, override val colour: Boolean, override val board: Board) : Figure {
+    init {
+        board.positions[position] = this
+    }
+
     override fun isThereFigure(location: Int): Boolean {
         return location in board.positions
     }

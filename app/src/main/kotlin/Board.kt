@@ -4,13 +4,29 @@ import figures.*
 
 class Board {
     val positions: MutableMap<Int, Figure> = mutableMapOf()
-    val whiteMoves: MutableMap<Int, Figure> = mutableMapOf()
-    val blackMoves: MutableMap<Int, Figure> = mutableMapOf()
+    val whiteMoves: MutableMap<Pair<Int, Int>, String> = mutableMapOf()
+    val blackMoves: MutableMap<Pair<Int, Int>, String> = mutableMapOf()
     var turn: Boolean = true
+    var isChecked: Boolean = false
 
     init {
-        for(i in 8..15) positions[i] = Pawn(true, i, this)
-        for(i in 48..55) positions[i] = Pawn(false, i, this)
+        for(i in 8..15) Pawn(i, true, this)
+        for(i in 0..7) {
+            if(i == 0 || i == 7) Rook(i, true, this)
+            else if(i == 1 || i == 6) Knight(i, true, this)
+            else if(i == 2 || i == 5) Bishop(i, true, this)
+            else if(i == 4) Queen(i, true, this)
+            else King(i, true, this)
+        }
+
+        for(i in 48..55) Pawn(i, false, this)
+        for(i in 56..63) {
+            if(i == 56 || i == 63) Rook(i, true, this)
+            else if(i == 57 || i == 62) Knight(i, true, this)
+            else if(i == 58 || i == 61) Bishop(i, true, this)
+            else if(i == 59) Queen(i, true, this)
+            else King(i, true, this)
+        }
     }
 }
 
