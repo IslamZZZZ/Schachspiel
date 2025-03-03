@@ -19,7 +19,7 @@ class Bishop(override val position: Int, override val colour: Boolean, override 
     }
 
     override fun move(newPosition: Int): Boolean {
-        if(newPosition - position == 7 || newPosition - position == 9) {
+        if(newPosition - position % 7 == 0 || newPosition - position % 9 == 0) {
             if (!isThereObstacle(position, newPosition)) {
                 if (isThereFigure(newPosition) && board.positions[newPosition]?.colour == colour) return false
                 board.positions[newPosition] = this
