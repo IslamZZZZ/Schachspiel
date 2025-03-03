@@ -7,6 +7,6 @@ interface Figure{
     val colour: Boolean
     val board: Board
 
-
-    fun move(newPosition: Int)
+    fun isThereFigure(location: Int): Boolean
+    fun move(newPosition: Int): Boolean
 }
