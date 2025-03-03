@@ -4,6 +4,9 @@ import figures.*
 
 class Board {
     val positions: MutableMap<Int, Figure> = mutableMapOf()
+    val whiteMoves: MutableMap<Int, Figure> = mutableMapOf()
+    val blackMoves: MutableMap<Int, Figure> = mutableMapOf()
+    var turn: Boolean = true
 
     init {
         for(i in 8..15) positions[i] = Pawn(true, i, this)
