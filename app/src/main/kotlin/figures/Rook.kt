@@ -8,7 +8,7 @@ class Rook(override val position: Int, override val colour: Boolean, override va
     }
 
     private fun isThereObstacle(start: Int, end: Int): Boolean {
-        val sign = (start - end).sign
+        val sign = (end - start).sign
         //sign of this operation
         val jump = if(end - start % 8 == 0) 8 else 1
         //we jump to the forward(8) or to the backward(1)

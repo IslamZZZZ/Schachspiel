@@ -8,7 +8,7 @@ class Bishop(override val position: Int, override val colour: Boolean, override 
     }
 
     private fun isThereObstacle(start: Int, end: Int): Boolean {
-        val sign = (start - end).sign
+        val sign = (end - start).sign
         //sign of this operation
         val jump = if(end - start % 9 == 0) 9 else 7
         //we jump to the right(9) or to the left(7)
