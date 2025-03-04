@@ -2,14 +2,14 @@ package figures
 import Board.Board
 import kotlin.math.abs
 
-class King(override val position: Int, override val colour: Boolean, override val board: Board): Figure {
+class King(override var position: Int, override val colour: Boolean, override val board: Board): Figure {
     init {
         board.positions[position] = this
     }
 
-    override fun isThereFigure(location: Int): Boolean {
+    /*override fun isThereFigure(location: Int): Boolean {
         return location in board.positions
-    }
+    }*/
 
     override fun move(newPosition: Int): Boolean {
         /*if(this.noMoved && abs(newPosition - position) == 2) {
@@ -20,7 +20,7 @@ class King(override val position: Int, override val colour: Boolean, override va
         else if(abs(newPosition - position) == 7) true
         else if(abs(newPosition - position) == 8) true
         else return false
-        if(isThereFigure(newPosition) && board.positions[newPosition]?.colour == colour) return false
+        if(board.isThereFigure(newPosition) && board.positions[newPosition]?.colour == colour) return false
         board.positions[newPosition] = this
         board.positions.remove(position)
         return false

@@ -22,6 +22,7 @@ repositories {
 dependencies {
     // This dependency is used by the application.
     implementation(libs.guava)
+    testImplementation("org.junit.jupiter:junit-jupiter:5.8.1")
 }
 
 testing {

@@ -9,7 +9,17 @@ class Board {
     var turn: Boolean = true
     var isChecked: Boolean = false
 
-    init {
+    fun isThereFigure(position: Int): Boolean {
+        return position in positions
+    }
+
+    fun move(startPosition: Int, finalPosition: Int): Boolean {
+        if(!isThereFigure(startPosition)) return false
+        if(turn == positions[startPosition]?.colour) return positions[startPosition]?.move(finalPosition) ?: false
+        return positions[startPosition]?.move(finalPosition) ?: false
+    }
+
+    /*init {
         for(i in 8..15) Pawn(i, true, this)
         for(i in 0..7) {
             if(i == 0 || i == 7) Rook(i, true, this)
@@ -27,7 +37,7 @@ class Board {
             else if(i == 59) Queen(i, true, this)
             else King(i, true, this)
         }
-    }
+    }*/
 }
 
 /*
