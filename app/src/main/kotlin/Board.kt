@@ -8,6 +8,7 @@ class Board {
     val blackMoves: MutableMap<Pair<Int, Int>, String> = mutableMapOf()
     var turn: Boolean = true
     var isChecked: Boolean = false
+    var gameWinner: Int = 0
 
     fun isThereFigure(position: Int): Boolean {
         return position in positions
@@ -17,6 +18,14 @@ class Board {
         if(!isThereFigure(startPosition)) return false
         if(turn == positions[startPosition]?.colour) return positions[startPosition]?.move(finalPosition) ?: false
         return positions[startPosition]?.move(finalPosition) ?: false
+    }
+
+    fun schach(colour: Boolean){
+        TODO()
+    }
+
+    fun clean() {
+        this.positions.clear()
     }
 
     /*init {
