@@ -12,6 +12,7 @@ plugins {
 
     // Apply the application plugin to add support for building a CLI application in Java.
     application
+    id("jacoco")
 }
 
 repositories {
@@ -19,10 +20,28 @@ repositories {
     mavenCentral()
 }
 
+
+tasks.withType<JacocoReport> {
+    reports {
+        xml.required.set(true)  // ✅ XML for CI/CD
+        csv.required.set(false) // ❌ Disable CSV
+        html.required.set(true) // ✅ HTML report
+    }
+}
+
 dependencies {
     // This dependency is used by the application.
     implementation(libs.guava)
     testImplementation("org.junit.jupiter:junit-jupiter:5.8.1")
+}
+
+tasks.named<JacocoReport>("jacocoTestReport") {
+    dependsOn(tasks.test)  // Ensure tests run before generating the report
+}
+
+
+tasks.build {
+    dependsOn("test", "jacocoTestReport")  // ✅ Runs tests + coverage
 }
 
 testing {
