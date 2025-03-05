@@ -1,5 +1,6 @@
 name: CI/CD with Gradle & JaCoCo
 
+
 on:
   push:
     branches:
@@ -36,3 +37,9 @@ jobs:
         with:
           name: jacoco-report
           path: app/build/reports/jacoco/test/html  # ✅ Path to JaCoCo HTML report
+          
+      - name: Deploy JaCoCo Report to GitHub Pages
+        uses: JamesIves/github-pages-deploy-action@v4
+        with:
+          branch: gh-pages  # ✅ This creates a `gh-pages` branch
+          folder: app/build/reports/jacoco/test/html  # ✅ Path to JaCoCo HTML report
