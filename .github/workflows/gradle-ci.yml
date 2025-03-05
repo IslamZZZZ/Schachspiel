@@ -1,0 +1,38 @@
+name: CI/CD with Gradle & JaCoCo
+
+on:
+  push:
+    branches:
+      - main  # ✅ Runs when pushing to main
+  pull_request:
+    branches:
+      - main  # ✅ Runs on pull requests to main
+
+jobs:
+  build:
+    runs-on: ubuntu-latest  # ✅ Runs on latest Ubuntu environment
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v3
+        with:
+          distribution: 'temurin'
+          java-version: '17'
+
+      - name: Grant execute permission for Gradle
+        run: chmod +x gradlew
+
+      - name: Build and Run Tests
+        run: ./gradlew clean build
+
+      - name: Run JaCoCo Coverage Report
+        run: ./gradlew jacocoTestReport
+
+      - name: Upload JaCoCo Coverage Report
+        uses: actions/upload-artifact@v4
+        with:
+          name: jacoco-report
+          path: app/build/reports/jacoco/test/html  # ✅ Path to JaCoCo HTML report

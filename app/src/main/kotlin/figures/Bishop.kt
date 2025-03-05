@@ -1,0 +1,37 @@
+package figures
+import Board.Board
+import kotlin.math.sign
+
+class Bishop(override var position: Int, override val colour: Boolean, override val board: Board) : Figure {
+    init {
+        board.positions[position] = this
+    }
+
+    /*override fun isThereFigure(location: Int): Boolean {
+        return location in board.positions
+    }*/
+
+    private fun isThereObstacle(start: Int, end: Int): Boolean {
+        val sign = (end - start).sign
+        //sign of this operation
+        val jump = if(end - start % 9 == 0) 9 else 7
+        //we jump to the right(9) or to the left(7)
+        var i = 1
+        while(start + sign * i * jump != end) if(board.isThereFigure(start + sign * i++ * jump)) return false
+        //If we face obstacle, we can't move
+        return true
+    }
+
+    override fun move(newPosition: Int): Boolean {
+        if(newPosition - position % 7 == 0 || newPosition - position % 9 == 0) {
+            if (!isThereObstacle(position, newPosition)) {
+                if (board.isThereFigure(newPosition) && board.positions[newPosition]?.colour == colour) return false
+                board.positions[newPosition] = this
+                board.positions.remove(position)
+                return true
+            }
+        }
+        return false
+    }
+
+}
