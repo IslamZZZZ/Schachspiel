@@ -41,5 +41,10 @@ jobs:
       - name: Deploy JaCoCo Report to GitHub Pages
         uses: JamesIves/github-pages-deploy-action@v4
         with:
-          branch: gh-pages  # ✅ This creates a `gh-pages` branch
+          token: ${{ secrets.GITHUB_TOKEN }}  # ✅ Uses GitHub's built-in authentication
+          branch: gh-pages  # ✅ Deploys to `gh-pages`
           folder: app/build/reports/jacoco/test/html  # ✅ Path to JaCoCo HTML report
+
+
+      
+
