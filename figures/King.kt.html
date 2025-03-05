@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>King.kt</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">app</a> &gt; <a href="index.source.html" class="el_package">figures</a> &gt; <span class="el_source">King.kt</span></div><h1>King.kt</h1><pre class="source lang-java linenums">package figures
+import Board.Board
+import kotlin.math.abs
+
+<span class="nc" id="L5">class King(override var position: Int, override val colour: Boolean, override val board: Board): Figure {</span>
+<span class="nc" id="L6">    init {</span>
+<span class="nc" id="L7">        board.positions[position] = this</span>
+<span class="nc" id="L8">    }</span>
+
+    /*override fun isThereFigure(location: Int): Boolean {
+        return location in board.positions
+    }*/
+
+    override fun move(newPosition: Int): Boolean {
+        /*if(this.noMoved &amp;&amp; abs(newPosition - position) == 2) {
+            if(0 in board.positions &amp;&amp; board.positions[0]?.noMoved)
+        }*/
+<span class="nc bnc" id="L18" title="All 2 branches missed.">        val flag = if(abs(newPosition - position) == 1) true</span>
+<span class="nc bnc" id="L19" title="All 2 branches missed.">        else if(abs(newPosition - position) == 9) true</span>
+<span class="nc bnc" id="L20" title="All 2 branches missed.">        else if(abs(newPosition - position) == 7) true</span>
+<span class="nc bnc" id="L21" title="All 2 branches missed.">        else if(abs(newPosition - position) == 8) true</span>
+<span class="nc" id="L22">        else return false</span>
+<span class="nc bnc" id="L23" title="All 8 branches missed.">        if(board.isThereFigure(newPosition) &amp;&amp; board.positions[newPosition]?.colour == colour) return false</span>
+<span class="nc" id="L24">        board.positions[newPosition] = this</span>
+<span class="nc" id="L25">        board.positions.remove(position)</span>
+<span class="nc" id="L26">        return false</span>
+    }
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.12.202403310830</span></div></body></html>

@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>Pawn.kt</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">app</a> &gt; <a href="index.source.html" class="el_package">figures</a> &gt; <span class="el_source">Pawn.kt</span></div><h1>Pawn.kt</h1><pre class="source lang-java linenums">package figures
+
+import Board.Board
+import kotlin.math.abs
+
+<span class="fc" id="L6">class Pawn(override var position: Int, override val colour: Boolean, override val board: Board): Figure{</span>
+<span class="fc" id="L7">    init {</span>
+<span class="fc" id="L8">        board.positions[position] = this</span>
+<span class="fc" id="L9">    }</span>
+
+    /*override fun isThereFigure(location: Int): Boolean {
+        TODO()
+    }*/
+
+    override fun move(newPosition: Int): Boolean {
+<span class="fc bfc" id="L16" title="All 2 branches covered.">        val sign = if(colour) 1 else -1</span>
+<span class="fc" id="L17">        val dif = newPosition - position</span>
+
+<span class="fc bfc" id="L19" title="All 2 branches covered.">        if(abs(dif) == 8) {</span>
+<span class="fc bfc" id="L20" title="All 2 branches covered.">            if(board.isThereFigure(newPosition)) return false</span>
+            //Is there a figure - we can't move
+        }
+<span class="fc bfc" id="L23" title="All 2 branches covered.">        else if(abs(dif) == 16) {</span>
+            //if(position / 8 != 1 || board.isThereFigure(newPosition) || board.isThereFigure(newPosition - 8)) return false
+<span class="fc bfc" id="L25" title="All 8 branches covered.">            if( (colour &amp;&amp; position / 8 != 1) || (!colour &amp;&amp; position / 8 != 6)) return false</span>
+<span class="fc bfc" id="L26" title="All 4 branches covered.">            if(board.isThereFigure(newPosition) || board.isThereFigure(newPosition - 8 * sign)) return false</span>
+            //We've not moved or there's obstacle right before our move - we can't move
+        }
+<span class="fc bfc" id="L29" title="All 8 branches covered.">        else if( (abs(dif) == 8 - sign &amp;&amp; position % 8 != 0) || (abs(dif) == 8 + sign &amp;&amp; position % 8 != 7) ) {</span>
+<span class="pc bpc" id="L30" title="4 of 8 branches missed.">            if(!board.isThereFigure(newPosition) || board.positions[newPosition]?.colour == this.colour) return false</span>
+            //There's no figure, or it's ours - we can't move
+        }
+<span class="fc" id="L33">        else return false</span>
+
+<span class="fc" id="L35">        board.positions[newPosition] = this</span>
+<span class="fc" id="L36">        board.positions.remove(position)</span>
+<span class="fc" id="L37">        this.position = newPosition</span>
+        //We change new position with our figure and remove our previous position
+
+<span class="fc bfc" id="L40" title="All 2 branches covered.">        board.turn = !colour</span>
+        //We also change turn to another colour
+
+<span class="fc bfc" id="L43" title="All 2 branches covered.">        if(colour) board.whiteMoves[Pair(position, newPosition)] = &quot;Pawn&quot;</span>
+<span class="fc" id="L44">        else board.blackMoves[Pair(position, newPosition)] = &quot;Pawn&quot;</span>
+
+<span class="fc" id="L46">        return true</span>
+    }
+
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.12.202403310830</span></div></body></html>
