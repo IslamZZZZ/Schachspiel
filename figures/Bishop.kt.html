@@ -2,7 +2,7 @@
 import Board.Board
 import kotlin.math.sign
 
-<span class="pc" id="L5">class Bishop(override var position: Int, override val colour: Boolean, override val board: Board) : Figure {</span>
+<span class="fc" id="L5">class Bishop(override var position: Int, override val colour: Boolean, override val board: Board) : Figure {</span>
 <span class="fc" id="L6">    init {</span>
 <span class="fc" id="L7">        board.positions[position] = this</span>
 <span class="fc" id="L8">    }</span>
@@ -34,7 +34,7 @@ import kotlin.math.sign
     override fun move(newPosition: Int): Boolean {
 <span class="fc bfc" id="L35" title="All 4 branches covered.">        if( ((newPosition - position) % 7 == 0) || ((newPosition - position) % 9 == 0) ) {</span>
 <span class="fc bfc" id="L36" title="All 2 branches covered.">            if (!isThereObstacle(position, newPosition)) {</span>
-<span class="pc bpc" id="L37" title="7 of 8 branches missed.">                if (board.isThereFigure(newPosition) &amp;&amp; board.positions[newPosition]?.colour == colour) return false</span>
+<span class="pc bpc" id="L37" title="3 of 8 branches missed.">                if (board.isThereFigure(newPosition) &amp;&amp; board.positions[newPosition]?.colour == colour) return false</span>
 <span class="fc" id="L38">                board.positions[newPosition] = this</span>
 <span class="fc" id="L39">                board.positions.remove(position)</span>
 <span class="fc" id="L40">                this.position = newPosition</span>
