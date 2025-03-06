@@ -7,23 +7,24 @@ class King(override var position: Int, override val colour: Boolean, override va
         board.positions[position] = this
     }
 
-    /*override fun isThereFigure(location: Int): Boolean {
-        return location in board.positions
-    }*/
-
     override fun move(newPosition: Int): Boolean {
-        /*if(this.noMoved && abs(newPosition - position) == 2) {
-            if(0 in board.positions && board.positions[0]?.noMoved)
-        }*/
-        val flag = if(abs(newPosition - position) == 1) true
-        else if(abs(newPosition - position) == 9) true
-        else if(abs(newPosition - position) == 7) true
-        else if(abs(newPosition - position) == 8) true
-        else return false
+        val avaliableMoves: MutableList<Int> = mutableListOf(-1, 1, -7, 7, -8, 8, -9, 9)
+
+        if( (position / 8) == 7) avaliableMoves.removeAll(listOf(7,8,9))
+        else if( (position / 8) == 0) avaliableMoves.removeAll(listOf(-7, -8, -9))
+
+        if( (position % 8) == 7) avaliableMoves.removeAll(listOf(9, 1, -7))
+        else if( (position % 8) == 0) avaliableMoves.removeAll(listOf(7, -1, -9))
+
+        if( (newPosition - position) !in avaliableMoves) return false
+
         if(board.isThereFigure(newPosition) && board.positions[newPosition]?.colour == colour) return false
+
         board.positions[newPosition] = this
         board.positions.remove(position)
-        return false
+        this.position = newPosition
+
+        return true
     }
 
 }
