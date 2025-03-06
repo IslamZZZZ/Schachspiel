@@ -1,6 +1,7 @@
 package Board
 
 import figures.*
+import kotlin.math.abs
 
 class Board {
     val positions: MutableMap<Int, Figure> = mutableMapOf()
@@ -15,20 +16,127 @@ class Board {
     }
 
     fun move(startPosition: Int, finalPosition: Int): Boolean {
+        val copiedPositions = positions.toMutableMap()
         if(!isThereFigure(startPosition)) return false
         if(turn == positions[startPosition]?.colour) return positions[startPosition]?.move(finalPosition) ?: false
         return positions[startPosition]?.move(finalPosition) ?: false
     }
 
-    fun schach(colour: Boolean){
-        TODO()
+    fun schach(copiedPositions: MutableMap<Int, Figure>): Boolean {
+        val king = copiedPositions.values.find { it is King && it.colour == this.turn}
+
+        king?.let {
+            var pos = it.position + 8
+            while(pos < 64) {
+                if(pos in copiedPositions) {
+                    val fig = copiedPositions[pos]
+                    if(abs(pos - it.position) == 8 && fig is King) return true
+                    if(fig?.colour == this.turn || fig is Pawn || fig is Knight || fig is Bishop) break
+                    else return true
+                }
+                pos += 8
+            }
+        }
+
+        king?.let {
+            var pos = it.position - 8
+            while(pos > -1) {
+                if(pos in copiedPositions) {
+                    val fig = copiedPositions[pos]
+                    if(abs(pos - it.position) == 8 && fig is King) return true
+                    if(fig?.colour == this.turn || fig is Pawn || fig is Knight || fig is Bishop) break
+                    else return true
+                }
+                pos -= 8
+            }
+        }
+
+        king?.let {
+            var pos = it.position + 1
+            while( (pos / 8) == (it.position / 8) ) {
+                if(pos in copiedPositions) {
+                    val fig = copiedPositions[pos]
+                    if(abs(pos - it.position) == 1 && fig is King) return true
+                    if(fig?.colour == this.turn || fig is Pawn || fig is Knight || fig is Bishop) break
+                    else return true
+                }
+                pos += 1
+            }
+        }
+
+        king?.let {
+            var pos = it.position - 1
+            while( (pos / 8) == (it.position / 8) ) {
+                if(pos in copiedPositions) {
+                    val fig = copiedPositions[pos]
+                    if(abs(pos - it.position) == 1 && fig is King) return true
+                    if(fig?.colour == this.turn || fig is Pawn || fig is Knight || fig is Bishop) break
+                    else return true
+                }
+                pos -= 1
+            }
+        }
+
+        king?.let {
+            var pos = it.position + 9
+            while( (pos % 8) > (it.position % 8) ) {
+                if(pos in copiedPositions) {
+                    val fig = copiedPositions[pos]
+                    if(abs(pos - it.position) == 9 && (fig is Pawn || fig is King)) return true
+                    if(fig?.colour == this.turn || fig is Pawn || fig is Knight || fig is Rook) break
+                    else return true
+                }
+                pos += 9
+            }
+        }
+
+        king?.let {
+            var pos = it.position - 9
+            while( (pos % 8) < (it.position % 8) ) {
+                if(pos in copiedPositions) {
+                    val fig = copiedPositions[pos]
+                    if(abs(pos - it.position) == 9 && (fig is Pawn || fig is King)) return true
+                    if(fig?.colour == this.turn || fig is Pawn || fig is Knight || fig is Rook) break
+                    else return true
+                }
+                pos -= 9
+            }
+        }
+
+        king?.let {
+            var pos = it.position + 7
+            while( (pos % 8) < (it.position % 8) ) {
+                if(pos in copiedPositions) {
+                    val fig = copiedPositions[pos]
+                    if(abs(pos - it.position) == 7 && (fig is Pawn || fig is King)) return true
+                    if(fig?.colour == this.turn || fig is Pawn || fig is Knight || fig is Rook) break
+                    else return true
+                }
+                pos += 7
+            }
+        }
+
+        king?.let {
+            var pos = it.position - 7
+            while( (pos % 8) > (it.position % 8) ) {
+                if(pos in copiedPositions) {
+                    val fig = copiedPositions[pos]
+                    if(abs(pos - it.position) == 7 && (fig is Pawn || fig is King)) return true
+                    if(fig?.colour == this.turn || fig is Pawn || fig is Knight || fig is Rook) break
+                    else return true
+                }
+                pos -= 7
+            }
+        }
+
+        return false
     }
 
     fun clean() {
         this.positions.clear()
     }
 
-    /*init {
+    fun setup() {
         for(i in 8..15) Pawn(i, true, this)
         for(i in 0..7) {
             if(i == 0 || i == 7) Rook(i, true, this)
@@ -46,7 +154,7 @@ class Board {
             else if(i == 59) Queen(i, true, this)
             else King(i, true, this)
         }
-    }*/
+    }
 }
 
 /*
