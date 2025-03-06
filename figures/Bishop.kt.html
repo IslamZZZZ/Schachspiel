@@ -2,36 +2,46 @@
 import Board.Board
 import kotlin.math.sign
 
-<span class="nc" id="L5">class Bishop(override var position: Int, override val colour: Boolean, override val board: Board) : Figure {</span>
-<span class="nc" id="L6">    init {</span>
-<span class="nc" id="L7">        board.positions[position] = this</span>
-<span class="nc" id="L8">    }</span>
+<span class="pc" id="L5">class Bishop(override var position: Int, override val colour: Boolean, override val board: Board) : Figure {</span>
+<span class="fc" id="L6">    init {</span>
+<span class="fc" id="L7">        board.positions[position] = this</span>
+<span class="fc" id="L8">    }</span>
 
     /*override fun isThereFigure(location: Int): Boolean {
         return location in board.positions
     }*/
 
     private fun isThereObstacle(start: Int, end: Int): Boolean {
-<span class="nc" id="L15">        val sign = (end - start).sign</span>
+<span class="fc" id="L15">        val dif = end - start</span>
+<span class="fc" id="L16">        val sign = dif.sign</span>
         //sign of this operation
-<span class="nc bnc" id="L17" title="All 2 branches missed.">        val jump = if(end - start % 9 == 0) 9 else 7</span>
-        //we jump to the right(9) or to the left(7)
-<span class="nc" id="L19">        var i = 1</span>
-<span class="nc bnc" id="L20" title="All 4 branches missed.">        while(start + sign * i * jump != end) if(board.isThereFigure(start + sign * i++ * jump)) return false</span>
+
+<span class="fc bfc" id="L19" title="All 4 branches covered.">        if( ( ( (sign == 1) &amp;&amp; (dif % 7 == 0) ) ||</span>
+<span class="fc bfc" id="L20" title="All 4 branches covered.">                    ( (sign == -1) &amp;&amp; (dif % 9 == 0) ) ) &amp;&amp;</span>
+<span class="fc bfc" id="L21" title="All 2 branches covered.">                        (end % 8 &gt;= start % 8)) return true</span>
+<span class="fc bfc" id="L22" title="All 4 branches covered.">        else if( ( ( (sign == -1) &amp;&amp; (dif % 7 == 0) ) ||</span>
+<span class="fc bfc" id="L23" title="All 4 branches covered.">                    ( (sign == 1) &amp;&amp; (dif % 9 == 0) ) ) &amp;&amp;</span>
+<span class="fc bfc" id="L24" title="All 2 branches covered.">                        (end % 8 &lt;= start % 8)) return true</span>
+
+<span class="fc bfc" id="L26" title="All 2 branches covered.">        val jump = if(end - start % 9 == 0) 9 else 7</span>
+        //we jump to the right(9/-7) or to the left(7/-9)
+<span class="fc" id="L28">        var i = 1</span>
+<span class="fc bfc" id="L29" title="All 4 branches covered.">        while(start + sign * i * jump != end) if(board.isThereFigure(start + sign * i++ * jump)) return true</span>
         //If we face obstacle, we can't move
-<span class="nc" id="L22">        return true</span>
+<span class="fc" id="L31">        return false</span>
     }
 
     override fun move(newPosition: Int): Boolean {
-<span class="nc bnc" id="L26" title="All 4 branches missed.">        if(newPosition - position % 7 == 0 || newPosition - position % 9 == 0) {</span>
-<span class="nc bnc" id="L27" title="All 2 branches missed.">            if (!isThereObstacle(position, newPosition)) {</span>
-<span class="nc bnc" id="L28" title="All 8 branches missed.">                if (board.isThereFigure(newPosition) &amp;&amp; board.positions[newPosition]?.colour == colour) return false</span>
-<span class="nc" id="L29">                board.positions[newPosition] = this</span>
-<span class="nc" id="L30">                board.positions.remove(position)</span>
-<span class="nc" id="L31">                return true</span>
+<span class="fc bfc" id="L35" title="All 4 branches covered.">        if( ((newPosition - position) % 7 == 0) || ((newPosition - position) % 9 == 0) ) {</span>
+<span class="fc bfc" id="L36" title="All 2 branches covered.">            if (!isThereObstacle(position, newPosition)) {</span>
+<span class="pc bpc" id="L37" title="7 of 8 branches missed.">                if (board.isThereFigure(newPosition) &amp;&amp; board.positions[newPosition]?.colour == colour) return false</span>
+<span class="fc" id="L38">                board.positions[newPosition] = this</span>
+<span class="fc" id="L39">                board.positions.remove(position)</span>
+<span class="fc" id="L40">                this.position = newPosition</span>
+<span class="fc" id="L41">                return true</span>
             }
         }
-<span class="nc" id="L34">        return false</span>
+<span class="fc" id="L44">        return false</span>
     }
 
 }
