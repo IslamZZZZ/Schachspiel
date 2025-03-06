@@ -10,6 +10,33 @@ import kotlin.test.assertFalse
 import kotlin.test.assertNull
 
 class BishopTest {
+    @Test
+    fun severalMoves() {
+        val board = Board()
+        val bishop = Bishop(10, true, board)
+
+        assertTrue(bishop.move(28))
+        assertNull(board.positions[10])
+        assertEquals(bishop, board.positions[28])
+
+        assertTrue(bishop.move(42))
+        assertNull(board.positions[28])
+        assertEquals(bishop, board.positions[42])
+
+        assertTrue(bishop.move(24))
+        assertNull(board.positions[42])
+        assertEquals(bishop, board.positions[24])
+
+        assertTrue(bishop.move(3))
+        assertNull(board.positions[24])
+        assertEquals(bishop, board.positions[3])
+
+        assertTrue(bishop.move(30))
+        assertNull(board.positions[3])
+        assertEquals(bishop, board.positions[30])
+    }
+
+
     @Nested
     @DisplayName("Так как при этом тесте нужно так же проверять и все правильные ходы, то они по сути" +
             "так же являются часть этого подкласса, чтоб отдельно их не расписывать")
@@ -209,7 +236,7 @@ class BishopTest {
             val board = Board()
 
             val bishop = Bishop(27, true, board)
-            val obstacle = Pawn(13, false, board)
+            val obstacle = Pawn(13, true, board)
 
             assertFalse(bishop.move(6))
             assertEquals(obstacle, board.positions[13])
@@ -229,5 +256,18 @@ class BishopTest {
             assertEquals(bishop, board.positions[27])
             assertNull(board.positions[0])
         }
+
+        @Test
+        fun obstacle_fuenf() {
+            val board = Board()
+
+            val bishop = Bishop(27, true, board)
+            val obstacle = Pawn(9, true, board)
+
+            assertFalse(bishop.move(9))
+            assertEquals(obstacle, board.positions[9])
+            assertEquals(bishop, board.positions[27])
+        }
     }
+
 }
