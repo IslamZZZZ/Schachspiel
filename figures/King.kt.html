@@ -2,28 +2,29 @@
 import Board.Board
 import kotlin.math.abs
 
-<span class="nc" id="L5">class King(override var position: Int, override val colour: Boolean, override val board: Board): Figure {</span>
-<span class="nc" id="L6">    init {</span>
-<span class="nc" id="L7">        board.positions[position] = this</span>
-<span class="nc" id="L8">    }</span>
-
-    /*override fun isThereFigure(location: Int): Boolean {
-        return location in board.positions
-    }*/
+<span class="fc" id="L5">class King(override var position: Int, override val colour: Boolean, override val board: Board): Figure {</span>
+<span class="fc" id="L6">    init {</span>
+<span class="fc" id="L7">        board.positions[position] = this</span>
+<span class="fc" id="L8">    }</span>
 
     override fun move(newPosition: Int): Boolean {
-        /*if(this.noMoved &amp;&amp; abs(newPosition - position) == 2) {
-            if(0 in board.positions &amp;&amp; board.positions[0]?.noMoved)
-        }*/
-<span class="nc bnc" id="L18" title="All 2 branches missed.">        val flag = if(abs(newPosition - position) == 1) true</span>
-<span class="nc bnc" id="L19" title="All 2 branches missed.">        else if(abs(newPosition - position) == 9) true</span>
-<span class="nc bnc" id="L20" title="All 2 branches missed.">        else if(abs(newPosition - position) == 7) true</span>
-<span class="nc bnc" id="L21" title="All 2 branches missed.">        else if(abs(newPosition - position) == 8) true</span>
-<span class="nc" id="L22">        else return false</span>
-<span class="nc bnc" id="L23" title="All 8 branches missed.">        if(board.isThereFigure(newPosition) &amp;&amp; board.positions[newPosition]?.colour == colour) return false</span>
-<span class="nc" id="L24">        board.positions[newPosition] = this</span>
-<span class="nc" id="L25">        board.positions.remove(position)</span>
-<span class="nc" id="L26">        return false</span>
+<span class="fc" id="L11">        val avaliableMoves: MutableList&lt;Int&gt; = mutableListOf(-1, 1, -7, 7, -8, 8, -9, 9)</span>
+
+<span class="fc bfc" id="L13" title="All 2 branches covered.">        if( (position / 8) == 7) avaliableMoves.removeAll(listOf(7,8,9))</span>
+<span class="fc bfc" id="L14" title="All 2 branches covered.">        else if( (position / 8) == 0) avaliableMoves.removeAll(listOf(-7, -8, -9))</span>
+
+<span class="fc bfc" id="L16" title="All 2 branches covered.">        if( (position % 8) == 7) avaliableMoves.removeAll(listOf(9, 1, -7))</span>
+<span class="fc bfc" id="L17" title="All 2 branches covered.">        else if( (position % 8) == 0) avaliableMoves.removeAll(listOf(7, -1, -9))</span>
+
+<span class="fc bfc" id="L19" title="All 2 branches covered.">        if( (newPosition - position) !in avaliableMoves) return false</span>
+
+<span class="pc bpc" id="L21" title="3 of 8 branches missed.">        if(board.isThereFigure(newPosition) &amp;&amp; board.positions[newPosition]?.colour == colour) return false</span>
+
+<span class="fc" id="L23">        board.positions[newPosition] = this</span>
+<span class="fc" id="L24">        board.positions.remove(position)</span>
+<span class="fc" id="L25">        this.position = newPosition</span>
+
+<span class="fc" id="L27">        return true</span>
     }
 
 }
