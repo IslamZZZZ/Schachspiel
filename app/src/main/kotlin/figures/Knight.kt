@@ -11,7 +11,7 @@ class Knight(override var position: Int, override val colour: Boolean, override 
         return location in board.positions
     }*/
 
-    override fun move(newPosition: Int): Boolean {
+    override fun canMove(newPosition: Int): Boolean {
         val flag = if(abs(newPosition - position) == 15) true
         else if(abs(newPosition - position) == 17) true
         else if(abs(newPosition - position) == 10) true
@@ -33,9 +33,6 @@ class Knight(override var position: Int, override val colour: Boolean, override 
         if(newPosition - position !in avaliableMoves) return false
 
         if(board.isThereFigure(newPosition) && board.positions[newPosition]?.colour == colour) return false
-        board.positions[newPosition] = this
-        board.positions.remove(position)
-        this.position = newPosition
 
         return true
     }

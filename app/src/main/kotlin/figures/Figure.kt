@@ -8,5 +8,5 @@ interface Figure{
     val board: Board
 
     // fun isThereFigure(location: Int): Boolean
-    fun move(newPosition: Int): Boolean
+    fun canMove(newPosition: Int): Boolean
 }
