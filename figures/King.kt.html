@@ -2,12 +2,12 @@
 import Board.Board
 import kotlin.math.abs
 
-<span class="fc" id="L5">class King(override var position: Int, override val colour: Boolean, override val board: Board): Figure {</span>
+<span class="pc" id="L5">class King(override var position: Int, override val colour: Boolean, override val board: Board): Figure {</span>
 <span class="fc" id="L6">    init {</span>
 <span class="fc" id="L7">        board.positions[position] = this</span>
 <span class="fc" id="L8">    }</span>
 
-    override fun move(newPosition: Int): Boolean {
+    override fun canMove(newPosition: Int): Boolean {
 <span class="fc" id="L11">        val avaliableMoves: MutableList&lt;Int&gt; = mutableListOf(-1, 1, -7, 7, -8, 8, -9, 9)</span>
 
 <span class="fc bfc" id="L13" title="All 2 branches covered.">        if( (position / 8) == 7) avaliableMoves.removeAll(listOf(7,8,9))</span>
@@ -18,13 +18,9 @@ import kotlin.math.abs
 
 <span class="fc bfc" id="L19" title="All 2 branches covered.">        if( (newPosition - position) !in avaliableMoves) return false</span>
 
-<span class="pc bpc" id="L21" title="3 of 8 branches missed.">        if(board.isThereFigure(newPosition) &amp;&amp; board.positions[newPosition]?.colour == colour) return false</span>
+<span class="pc bpc" id="L21" title="1 of 8 branches missed.">        if(board.isThereFigure(newPosition) &amp;&amp; board.positions[newPosition]?.colour == colour) return false</span>
 
-<span class="fc" id="L23">        board.positions[newPosition] = this</span>
-<span class="fc" id="L24">        board.positions.remove(position)</span>
-<span class="fc" id="L25">        this.position = newPosition</span>
-
-<span class="fc" id="L27">        return true</span>
+<span class="fc" id="L23">        return true</span>
     }
 
 }

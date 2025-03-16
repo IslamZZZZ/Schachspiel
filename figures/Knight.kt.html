@@ -2,7 +2,7 @@
 import Board.Board
 import kotlin.math.abs
 
-<span class="fc" id="L5">class Knight(override var position: Int, override val colour: Boolean, override val board: Board): Figure {</span>
+<span class="pc" id="L5">class Knight(override var position: Int, override val colour: Boolean, override val board: Board): Figure {</span>
 <span class="fc" id="L6">    init {</span>
 <span class="fc" id="L7">        board.positions[position] = this</span>
 <span class="fc" id="L8">    }</span>
@@ -11,7 +11,7 @@ import kotlin.math.abs
         return location in board.positions
     }*/
 
-    override fun move(newPosition: Int): Boolean {
+    override fun canMove(newPosition: Int): Boolean {
 <span class="fc bfc" id="L15" title="All 2 branches covered.">        val flag = if(abs(newPosition - position) == 15) true</span>
 <span class="fc bfc" id="L16" title="All 2 branches covered.">        else if(abs(newPosition - position) == 17) true</span>
 <span class="fc bfc" id="L17" title="All 2 branches covered.">        else if(abs(newPosition - position) == 10) true</span>
@@ -33,11 +33,8 @@ import kotlin.math.abs
 <span class="fc bfc" id="L33" title="All 2 branches covered.">        if(newPosition - position !in avaliableMoves) return false</span>
 
 <span class="pc bpc" id="L35" title="1 of 8 branches missed.">        if(board.isThereFigure(newPosition) &amp;&amp; board.positions[newPosition]?.colour == colour) return false</span>
-<span class="fc" id="L36">        board.positions[newPosition] = this</span>
-<span class="fc" id="L37">        board.positions.remove(position)</span>
-<span class="fc" id="L38">        this.position = newPosition</span>
 
-<span class="fc" id="L40">        return true</span>
+<span class="fc" id="L37">        return true</span>
     }
 
 }

@@ -3,7 +3,7 @@
 import Board.Board
 import kotlin.math.abs
 
-<span class="fc" id="L6">class Pawn(override var position: Int, override val colour: Boolean, override val board: Board): Figure{</span>
+<span class="pc" id="L6">class Pawn(override var position: Int, override val colour: Boolean, override val board: Board): Figure{</span>
 <span class="fc" id="L7">    init {</span>
 <span class="fc" id="L8">        board.positions[position] = this</span>
 <span class="fc" id="L9">    }</span>
@@ -12,38 +12,28 @@ import kotlin.math.abs
         TODO()
     }*/
 
-    override fun move(newPosition: Int): Boolean {
+    override fun canMove(newPosition: Int): Boolean {
 <span class="fc bfc" id="L16" title="All 2 branches covered.">        val sign = if(colour) 1 else -1</span>
 <span class="fc" id="L17">        val dif = newPosition - position</span>
 
 <span class="fc bfc" id="L19" title="All 2 branches covered.">        if(abs(dif) == 8) {</span>
 <span class="fc bfc" id="L20" title="All 2 branches covered.">            if(board.isThereFigure(newPosition)) return false</span>
-            //Is there a figure - we can't move
+            //Is there a figure - we can't canMove
         }
 <span class="fc bfc" id="L23" title="All 2 branches covered.">        else if(abs(dif) == 16) {</span>
             //if(position / 8 != 1 || board.isThereFigure(newPosition) || board.isThereFigure(newPosition - 8)) return false
-<span class="fc bfc" id="L25" title="All 8 branches covered.">            if( (colour &amp;&amp; position / 8 != 1) || (!colour &amp;&amp; position / 8 != 6)) return false</span>
+<span class="pc bpc" id="L25" title="1 of 8 branches missed.">            if( (colour &amp;&amp; position / 8 != 1) || (!colour &amp;&amp; position / 8 != 6)) return false</span>
 <span class="fc bfc" id="L26" title="All 4 branches covered.">            if(board.isThereFigure(newPosition) || board.isThereFigure(newPosition - 8 * sign)) return false</span>
-            //We've not moved or there's obstacle right before our move - we can't move
+            //We've not moved or there's obstacle right before our canMove - we can't canMove
         }
 <span class="fc bfc" id="L29" title="All 8 branches covered.">        else if( (abs(dif) == 8 - sign &amp;&amp; position % 8 != 0) || (abs(dif) == 8 + sign &amp;&amp; position % 8 != 7) ) {</span>
 <span class="pc bpc" id="L30" title="4 of 8 branches missed.">            if(!board.isThereFigure(newPosition) || board.positions[newPosition]?.colour == this.colour) return false</span>
-            //There's no figure, or it's ours - we can't move
+            //There's no figure, or it's ours - we can't canMove
         }
 <span class="fc" id="L33">        else return false</span>
 
-<span class="fc" id="L35">        board.positions[newPosition] = this</span>
-<span class="fc" id="L36">        board.positions.remove(position)</span>
-<span class="fc" id="L37">        this.position = newPosition</span>
-        //We change new position with our figure and remove our previous position
 
-<span class="fc bfc" id="L40" title="All 2 branches covered.">        board.turn = !colour</span>
-        //We also change turn to another colour
-
-<span class="fc bfc" id="L43" title="All 2 branches covered.">        if(colour) board.whiteMoves[Pair(position, newPosition)] = &quot;Pawn&quot;</span>
-<span class="fc" id="L44">        else board.blackMoves[Pair(position, newPosition)] = &quot;Pawn&quot;</span>
-
-<span class="fc" id="L46">        return true</span>
+<span class="fc" id="L36">        return true</span>
     }
 
 
