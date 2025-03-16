@@ -16,16 +16,54 @@ class Board {
     }
 
     fun move(startPosition: Int, finalPosition: Int): Boolean {
-        val copiedPositions = positions.toMutableMap()
         if(!isThereFigure(startPosition)) return false
-        if(turn == positions[startPosition]?.colour) return positions[startPosition]?.move(finalPosition) ?: false
-        return positions[startPosition]?.move(finalPosition) ?: false
+
+        val copiedPositions = positions.toMutableMap()
+        copiedPositions[startPosition]?.let { copiedPositions[finalPosition] = it }
+        copiedPositions.remove(startPosition)
+        if(schach(copiedPositions)) return false
+
+        if(turn == positions[startPosition]?.colour && (positions[startPosition]?.canMove(finalPosition) == true)) {
+            positions[startPosition]?.let{ positions[finalPosition] = it }
+            positions.remove(startPosition)
+
+
+            positions[startPosition]?.let{
+                val figure = if(it is Bishop) "Bishop"
+                else if(it is King) "King"
+                else if(it is Knight) "Knight"
+                else if(it is Pawn) "Pawn"
+                else if(it is Queen) "Queen"
+                else "Rook"
+
+                if(turn) whiteMoves[Pair(startPosition, finalPosition)] = figure
+                else blackMoves[Pair(startPosition, finalPosition)] = figure
+            }
+
+            this.turn = !turn
+
+            return true
+        }
+
+        return false
     }
 
     fun schach(copiedPositions: MutableMap<Int, Figure>): Boolean {
         val king = copiedPositions.values.find { it is King && it.colour == this.turn}
 
         king?.let {
+            for(fig in positions.values) if(fig.colour != it.colour && fig.canMove(it.position)) return true
+        }
+
+        //Как сделать для коня? Надо заменить canMove на canMove(а то у нас проблема, что вызов функции вызывает само
+        //движение, хотя порой нам нужно знать лишь может ль фигура туда пойти)
+        //перенести последние строки перемещения в Board(они все одинаковые)
+        //далее ищем всех вражеских коней, и в canMove ставим положение короля, если true
+        //то очевидно, что шах, а иначе шаха от коня нету
+        //Так наверное можно для всех фигур противоположного цвета сделать
+        //и по идее это не должно быть ресурснозатратно относительно того, что я уже сделал
+
+        /*king?.let {
             var pos = it.position + 8
             while(pos < 64) {
                 if(pos in copiedPositions) {
@@ -127,7 +165,7 @@ class Board {
                 }
                 pos -= 7
             }
-        }
+        }*/
 
         return false
     }
@@ -157,6 +195,8 @@ class Board {
     }
 }
 
+
+//BOARD//
 /*
 56 57 58 59 60 61 62 63 - 8
 48 49 50 51 52 53 54 55 - 7

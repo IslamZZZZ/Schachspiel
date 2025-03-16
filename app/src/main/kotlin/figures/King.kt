@@ -7,7 +7,7 @@ class King(override var position: Int, override val colour: Boolean, override va
         board.positions[position] = this
     }
 
-    override fun move(newPosition: Int): Boolean {
+    override fun canMove(newPosition: Int): Boolean {
         val avaliableMoves: MutableList<Int> = mutableListOf(-1, 1, -7, 7, -8, 8, -9, 9)
 
         if( (position / 8) == 7) avaliableMoves.removeAll(listOf(7,8,9))
@@ -19,10 +19,6 @@ class King(override var position: Int, override val colour: Boolean, override va
         if( (newPosition - position) !in avaliableMoves) return false
 
         if(board.isThereFigure(newPosition) && board.positions[newPosition]?.colour == colour) return false
-
-        board.positions[newPosition] = this
-        board.positions.remove(position)
-        this.position = newPosition
 
         return true
     }
