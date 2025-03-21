@@ -1,0 +1,616 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>main.kt</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">app</a> &gt; <a href="index.source.html" class="el_package">default</a> &gt; <span class="el_source">main.kt</span></div><h1>main.kt</h1><pre class="source lang-java linenums">import androidx.compose.desktop.ui.tooling.preview.Preview
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.*
+import androidx.compose.material.*
+import androidx.compose.runtime.*
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.font.FontStyle
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
+import androidx.compose.ui.window.Window
+import androidx.compose.ui.window.application
+import androidx.compose.foundation.Image
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.ui.draw.shadow
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.res.painterResource
+
+
+<span class="nc" id="L23">data class Language(val code: String, val name: String)</span>
+
+enum class Screen {
+<span class="nc" id="L26">    START,</span>
+<span class="nc" id="L27">    GAME</span>
+}
+
+
+<span class="nc" id="L31">val availableLanguages = listOf(</span>
+<span class="nc" id="L32">    Language(&quot;ru&quot;, &quot;Русский&quot;),</span>
+<span class="nc" id="L33">    Language(&quot;en&quot;, &quot;English&quot;),</span>
+<span class="nc" id="L34">    Language(&quot;de&quot;, &quot;Deutsch&quot;)</span>
+)
+
+// Список доступных языков
+<span class="nc" id="L38">fun main() = application {</span>
+<span class="nc bnc" id="L39" title="All 6 branches missed.">    var currentScreen by remember { mutableStateOf(Screen.START) }</span>
+
+<span class="nc bnc" id="L41" title="All 2 branches missed.">    Window(onCloseRequest = ::exitApplication, title = &quot;Das Schachspiel&quot;) {</span>
+<span class="nc bnc" id="L42" title="All 8 branches missed.">        MaterialTheme {</span>
+<span class="nc bnc" id="L43" title="All 9 branches missed.">                when(currentScreen) {</span>
+<span class="nc" id="L44">                    Screen.START -&gt; StartScreen( { currentScreen = Screen.GAME } )</span>
+<span class="nc" id="L45">                    Screen.GAME -&gt; GameScreen( { currentScreen = Screen.START } )</span>
+<span class="nc bnc" id="L46" title="All 2 branches missed.">                }</span>
+<span class="nc" id="L47">        }</span>
+<span class="nc" id="L48">    }</span>
+<span class="nc" id="L49">}</span>
+
+@Composable
+<span class="nc bnc" id="L52" title="All 18 branches missed.">fun standartButton(onButtonClick: () -&gt; Unit, text: String, colour: Color) {</span>
+<span class="nc bnc" id="L53" title="All 2 branches missed.">    Button(</span>
+<span class="nc" id="L54">        modifier = Modifier.height(80.dp),</span>
+<span class="nc" id="L55">        onClick = onButtonClick,</span>
+<span class="nc" id="L56">        colors = ButtonDefaults.buttonColors(backgroundColor = colour)</span>
+<span class="nc" id="L57">    ) {</span>
+<span class="nc bnc" id="L58" title="All 8 branches missed.">        Text(</span>
+<span class="nc" id="L59">            text,</span>
+<span class="nc" id="L60">            color = Color.White,</span>
+<span class="nc" id="L61">            fontSize = 26.sp,</span>
+<span class="nc" id="L62">            textAlign = TextAlign.Center,</span>
+<span class="nc" id="L63">            letterSpacing = 0.sp</span>
+<span class="nc" id="L64">        )</span>
+<span class="nc" id="L65">    }</span>
+<span class="nc bnc" id="L66" title="All 2 branches missed.">}</span>
+
+
+@Composable
+<span class="nc bnc" id="L70" title="All 6 branches missed.">fun dropLangMenu() {</span>
+    // Текущий выбранный язык
+<span class="nc" id="L72">    var selectedLanguage by remember { mutableStateOf(availableLanguages[0]) }</span>
+
+    // Состояние для выпадающего меню
+<span class="nc" id="L75">    var dropdownExpanded by remember { mutableStateOf(false) }</span>
+
+<span class="nc" id="L77">    Button(</span>
+<span class="nc" id="L78">        onClick = { dropdownExpanded = true },</span>
+<span class="nc" id="L79">        colors = ButtonDefaults.buttonColors(backgroundColor = Color(0xFF5D4E96)),</span>
+<span class="nc" id="L80">        modifier = Modifier.size(width = 180.dp, height = 40.dp)</span>
+<span class="nc" id="L81">    ) {</span>
+<span class="nc bnc" id="L82" title="All 8 branches missed.">        Text(&quot;Язык: ${selectedLanguage.code.uppercase()}&quot;, color = Color.White)</span>
+<span class="nc" id="L83">    }</span>
+
+    // Выпадающее меню с языками
+<span class="nc bnc" id="L86" title="All 2 branches missed.">    DropdownMenu(</span>
+<span class="nc" id="L87">        expanded = dropdownExpanded,</span>
+<span class="nc" id="L88">        onDismissRequest = { dropdownExpanded = false },</span>
+<span class="nc" id="L89">        modifier = Modifier.width(180.dp).background(Color.White)</span>
+<span class="nc" id="L90">    ) {</span>
+<span class="nc bnc" id="L91" title="All 6 branches missed.">        availableLanguages.forEach { language -&gt;</span>
+<span class="nc" id="L92">            DropdownMenuItem(</span>
+<span class="nc" id="L93">                onClick = {</span>
+<span class="nc" id="L94">                    selectedLanguage = language</span>
+<span class="nc" id="L95">                    dropdownExpanded = false</span>
+                    // Здесь можно добавить код для смены языка в приложении
+<span class="nc" id="L97">                    println(&quot;Выбран язык: ${language.name} (${language.code})&quot;)</span>
+<span class="nc" id="L98">                }</span>
+<span class="nc" id="L99">            ) {</span>
+<span class="nc bnc" id="L100" title="All 8 branches missed.">                Text(</span>
+<span class="nc" id="L101">                    &quot;${language.code.uppercase()} - ${language.name}&quot;,</span>
+<span class="nc bnc" id="L102" title="All 2 branches missed.">                    fontWeight = if (language == selectedLanguage) FontWeight.Bold else FontWeight.Normal</span>
+<span class="nc" id="L103">                )</span>
+<span class="nc" id="L104">            }</span>
+<span class="nc" id="L105">        }</span>
+<span class="nc" id="L106">    }</span>
+<span class="nc bnc" id="L107" title="All 2 branches missed.">}</span>
+
+@Composable
+<span class="nc bnc" id="L110" title="All 10 branches missed.">fun StartScreen(onGameClick: () -&gt; Unit) {</span>
+<span class="nc" id="L111">    Box(modifier = Modifier.fillMaxSize().background(Color(0xFFffdfdf))) {</span>
+
+<span class="nc" id="L113">        Box(</span>
+<span class="nc" id="L114">            modifier = Modifier</span>
+<span class="nc" id="L115">                .background(Color(0xFF3d3d3d))</span>
+<span class="nc" id="L116">                .height(80.dp)</span>
+<span class="nc" id="L117">                .fillMaxWidth()</span>
+        ) {
+<span class="nc" id="L119">            Box(modifier = Modifier.align(Alignment.Center)) {</span>
+<span class="nc" id="L120">                Text(</span>
+<span class="nc" id="L121">                    &quot;ШАХМАТЫ&quot;,</span>
+<span class="nc" id="L122">                    textAlign = TextAlign.Center,</span>
+<span class="nc" id="L123">                    fontSize = 30.sp,</span>
+<span class="nc" id="L124">                    fontWeight = FontWeight.Bold,</span>
+<span class="nc" id="L125">                    color = Color.White</span>
+                )
+<span class="nc" id="L127">            }</span>
+<span class="nc" id="L128">            Box(modifier = Modifier.align(Alignment.CenterEnd).padding(vertical = 20.dp)) { dropLangMenu() }</span>
+<span class="nc" id="L129">        }</span>
+
+<span class="nc" id="L131">        Box(modifier = Modifier.align(Alignment.CenterStart)) { bokovayaPanel(false) }</span>
+
+<span class="nc" id="L133">        Box(modifier = Modifier.align(Alignment.CenterEnd)) { bokovayaPanel(true) }</span>
+
+<span class="nc" id="L135">        Column(</span>
+<span class="nc" id="L136">            modifier = Modifier.align(Alignment.Center),</span>
+<span class="nc" id="L137">            horizontalAlignment = Alignment.CenterHorizontally,</span>
+<span class="nc" id="L138">            verticalArrangement = Arrangement.Center</span>
+        ) {
+<span class="nc" id="L140">            standartButton(onGameClick, &quot;Начать игру&quot;, Color.Green)</span>
+
+<span class="nc" id="L142">            Spacer(modifier = Modifier.padding(20.dp))</span>
+
+<span class="nc" id="L144">            standartButton({}, &quot;Загрузить игру&quot;, Color.Blue)</span>
+<span class="nc" id="L145">        }</span>
+
+<span class="nc" id="L147">        Box(</span>
+<span class="nc" id="L148">            modifier = Modifier</span>
+<span class="nc" id="L149">                .fillMaxWidth()</span>
+<span class="nc" id="L150">                .height(50.dp)</span>
+<span class="nc" id="L151">                .align(Alignment.BottomStart)</span>
+<span class="nc" id="L152">                .background(Color(0xFF3d3d3d))</span>
+        ) {
+<span class="nc" id="L154">            Button(</span>
+<span class="nc" id="L155">                onClick = {},</span>
+<span class="nc" id="L156">                colors = ButtonDefaults.buttonColors(backgroundColor = Color.Red),</span>
+<span class="nc" id="L157">                modifier = Modifier</span>
+<span class="nc" id="L158">                    .align(Alignment.CenterStart)</span>
+<span class="nc" id="L159">                    .padding(start = 15.dp)</span>
+<span class="nc" id="L160">            ) {</span>
+<span class="nc bnc" id="L161" title="All 8 branches missed.">                Text(&quot;Выход&quot;, fontSize = 18.sp)</span>
+<span class="nc" id="L162">            }</span>
+
+<span class="nc" id="L164">            Text(</span>
+<span class="nc" id="L165">                &quot;Версия: Бета 1.0&quot;,</span>
+<span class="nc" id="L166">                modifier = Modifier.align(Alignment.Center),</span>
+<span class="nc" id="L167">                color = Color(0xFFc7c0c0).copy(alpha = 0.5f),</span>
+<span class="nc" id="L168">                fontSize = 20.sp</span>
+            )
+<span class="nc" id="L170">        }</span>
+
+
+<span class="nc" id="L173">    }</span>
+<span class="nc bnc" id="L174" title="All 2 branches missed.">}</span>
+
+@Composable
+<span class="nc bnc" id="L177" title="All 10 branches missed.">fun bokovayaPanel(colour: Boolean) {</span>
+<span class="nc bnc" id="L178" title="All 2 branches missed.">    val figure = if(colour) &quot;white&quot; else &quot;black&quot;</span>
+<span class="nc bnc" id="L179" title="All 2 branches missed.">        Image(</span>
+<span class="nc" id="L180">            painter = painterResource(&quot;${figure}-pieces-panel.svg&quot;),</span>
+<span class="nc" id="L181">            contentDescription = &quot;${figure} figure&quot;,</span>
+<span class="nc" id="L182">            modifier = Modifier</span>
+<span class="nc" id="L183">                .padding(40.dp)</span>
+<span class="nc" id="L184">                .fillMaxHeight(0.7f)</span>
+<span class="nc" id="L185">                .fillMaxWidth(0.25f),</span>
+<span class="nc" id="L186">            contentScale = ContentScale.FillBounds</span>
+        )
+<span class="nc bnc" id="L188" title="All 2 branches missed.">}</span>
+
+@Composable
+<span class="nc bnc" id="L191" title="All 10 branches missed.">fun GameScreen(onStartClick: () -&gt; Unit) {</span>
+
+<span class="nc" id="L193">    Box(</span>
+<span class="nc" id="L194">        modifier = Modifier.height(80.dp).background(Color.Cyan).fillMaxWidth()</span>
+    ) {
+<span class="nc" id="L196">        Box(modifier = Modifier.align(Alignment.TopStart)) {</span>
+<span class="nc" id="L197">            standartButton(onStartClick, &quot;Züruck&quot;, Color.Red)</span>
+<span class="nc" id="L198">        }</span>
+
+<span class="nc" id="L200">       Box(modifier = Modifier.align(Alignment.TopEnd)) {</span>
+<span class="nc" id="L201">            dropLangMenu()</span>
+<span class="nc" id="L202">       }</span>
+<span class="nc" id="L203">    }</span>
+
+<span class="nc bnc" id="L205" title="All 2 branches missed.">}</span>
+
+/*data class Language(val code: String, val name: String)
+
+val availableLanguages = listOf(
+    Language(&quot;ru&quot;, &quot;Русский&quot;),
+    Language(&quot;en&quot;, &quot;English&quot;),
+    Language(&quot;de&quot;, &quot;Deutsch&quot;),
+    Language(&quot;fr&quot;, &quot;Français&quot;),
+    Language(&quot;es&quot;, &quot;Español&quot;)
+)
+
+fun main() = application {
+    Window(onCloseRequest = ::exitApplication, title = &quot;Выбор языка&quot;) {
+        MaterialTheme {
+            StartScreenWithLanguageSelector()
+        }
+    }
+}
+
+@Composable
+@Preview
+fun StartScreenWithLanguageSelector() {
+    // Текущий выбранный язык
+    var selectedLanguage by remember { mutableStateOf(availableLanguages[0]) }
+
+    // Состояние для выпадающего меню
+    var dropdownExpanded by remember { mutableStateOf(false) }
+
+    // Состояние для диалогового окна
+    var dialogVisible by remember { mutableStateOf(false) }
+
+    // Основной экран
+    Box(modifier = Modifier.fillMaxSize().background(Color(0xFFF5F5F5))) {
+
+        // Верхняя панель
+        Box(
+            modifier = Modifier
+                .align(Alignment.TopCenter)
+                .fillMaxWidth()
+                .height(80.dp)
+                .background(Color(0xFF3C3261))
+        ) {
+            Text(
+                &quot;ШАХМАТЫ&quot;,
+                color = Color.White,
+                fontSize = 24.sp,
+                fontWeight = FontWeight.Bold,
+                modifier = Modifier.align(Alignment.Center)
+            )
+
+            // 1. ВАРИАНТ С ВЫПАДАЮЩИМ МЕНЮ
+            // Кнопка выбора языка, которая показывает/скрывает выпадающее меню
+            /*Box(modifier = Modifier.align(Alignment.CenterEnd).padding(end = 16.dp)) {
+                Button(
+                    onClick = { dropdownExpanded = true },
+                    colors = ButtonDefaults.buttonColors(backgroundColor = Color(0xFF5D4E96)),
+                    modifier = Modifier.size(width = 120.dp, height = 40.dp)
+                ) {
+                    Text(&quot;Язык: ${selectedLanguage.code.uppercase()}&quot;, color = Color.White)
+                }
+
+                // Выпадающее меню с языками
+                DropdownMenu(
+                    expanded = dropdownExpanded,
+                    onDismissRequest = { dropdownExpanded = false },
+                    modifier = Modifier.width(120.dp).background(Color.White)
+                ) {
+                    availableLanguages.forEach { language -&gt;
+                        DropdownMenuItem(
+                            onClick = {
+                                selectedLanguage = language
+                                dropdownExpanded = false
+                                // Здесь можно добавить код для смены языка в приложении
+                                println(&quot;Выбран язык: ${language.name} (${language.code})&quot;)
+                            }
+                        ) {
+                            Text(
+                                &quot;${language.code.uppercase()} - ${language.name}&quot;,
+                                fontWeight = if (language == selectedLanguage) FontWeight.Bold else FontWeight.Normal
+                            )
+                        }
+                    }
+                }
+            }*/
+
+            // 2. ВАРИАНТ С ДИАЛОГОВЫМ ОКНОМ
+            // Кнопка для показа диалога выбора языка (закомментирована, чтобы не конфликтовать с предыдущим вариантом)
+
+            Button(
+                onClick = { dialogVisible = true },
+                colors = ButtonDefaults.buttonColors(backgroundColor = Color(0xFF5D4E96)),
+                modifier = Modifier
+                    .align(Alignment.CenterEnd)
+                    .padding(end = 16.dp)
+                    .size(width = 120.dp, height = 40.dp)
+            ) {
+                Text(&quot;Язык: ${selectedLanguage.code.uppercase()}&quot;, color = Color.White)
+            }
+
+        }
+
+        // Центральная часть - основные элементы меню
+        Column(
+            modifier = Modifier.align(Alignment.Center),
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.Center
+        ) {
+            Text(
+                &quot;Выберите действие&quot;,
+                fontSize = 24.sp,
+                fontWeight = FontWeight.Bold,
+                modifier = Modifier.padding(bottom = 32.dp)
+            )
+
+            Button(
+                onClick = { /* Действие при нажатии на кнопку &quot;Новая игра&quot; */ },
+                colors = ButtonDefaults.buttonColors(backgroundColor = Color(0xFF4CAF50)),
+                modifier = Modifier.size(width = 240.dp, height = 60.dp).padding(vertical = 8.dp)
+            ) {
+                Text(
+                    &quot;НОВАЯ ИГРА&quot;,
+                    color = Color.White,
+                    fontSize = 18.sp,
+                    fontWeight = FontWeight.Bold
+                )
+            }
+
+            Button(
+                onClick = { /* Действие при нажатии на кнопку &quot;Загрузить игру&quot; */ },
+                colors = ButtonDefaults.buttonColors(backgroundColor = Color(0xFF2196F3)),
+                modifier = Modifier.size(width = 240.dp, height = 60.dp).padding(vertical = 8.dp)
+            ) {
+                Text(
+                    &quot;ЗАГРУЗИТЬ ИГРУ&quot;,
+                    color = Color.White,
+                    fontSize = 18.sp,
+                    fontWeight = FontWeight.Bold
+                )
+            }
+        }
+
+        // Нижняя панель
+        Box(
+            modifier = Modifier
+                .align(Alignment.BottomCenter)
+                .fillMaxWidth()
+                .height(60.dp)
+                .background(Color(0xFF3C3261))
+        ) {
+            // Отображение текущего языка
+            Text(
+                &quot;Текущий язык: ${selectedLanguage.name}&quot;,
+                color = Color.White,
+                modifier = Modifier.align(Alignment.Center)
+            )
+        }
+
+        // Диалоговое окно выбора языка
+        if (dialogVisible) {
+            AlertDialog(
+                onDismissRequest = { dialogVisible = false },
+                title = { Text(&quot;Выберите язык&quot;) },
+                text = {
+                    Column {
+                        availableLanguages.forEach { language -&gt;
+                            Button(
+                                onClick = {
+                                    selectedLanguage = language
+                                    dialogVisible = false
+                                    // Здесь можно добавить код для смены языка в приложении
+                                    println(&quot;Выбран язык: ${language.name} (${language.code})&quot;)
+                                },
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .padding(vertical = 4.dp),
+                                colors = ButtonDefaults.buttonColors(
+                                    backgroundColor = if (language == selectedLanguage)
+                                        Color(0xFF5D4E96) else Color(0xFFE0E0E0)
+                                )
+                            ) {
+                                Text(
+                                    &quot;${language.code.uppercase()} - ${language.name}&quot;,
+                                    color = if (language == selectedLanguage) Color.White else Color.Black
+                                )
+                            }
+                        }
+                    }
+                },
+                confirmButton = {},
+                dismissButton = {
+                    Button(
+                        onClick = { dialogVisible = false },
+                        colors = ButtonDefaults.buttonColors(backgroundColor = Color.Gray)
+                    ) {
+                        Text(&quot;Отмена&quot;, color = Color.White)
+                    }
+                }
+            )
+        }
+    }
+}
+
+/*@Composable
+@Preview
+fun ChessApp() {
+    // Состояние для отслеживания текущего экрана
+    var currentScreen by remember { mutableStateOf(Screen.START) }
+
+    MaterialTheme {
+        Surface(modifier = Modifier.fillMaxSize()) {
+            // В зависимости от текущего экрана показываем нужный композабл
+            when (currentScreen) {
+                Screen.START -&gt; StartScreen(onStartClick = { currentScreen = Screen.GAME })
+                Screen.GAME -&gt; GameScreen(onBackClick = { currentScreen = Screen.START })
+            }
+        }
+    }
+}
+
+// Стартовый экран с кнопкой &quot;Начать игру&quot;
+@Composable
+fun StartScreen(onStartClick: () -&gt; Unit) {
+    Column(
+        modifier = Modifier.fillMaxSize(),
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.Center
+    ) {
+        Text(
+            &quot;Шахматы&quot;,
+            style = MaterialTheme.typography.h2,
+            fontWeight = FontWeight.Bold,
+            modifier = Modifier.padding(bottom = 32.dp)
+        )
+
+        Button(
+            onClick = onStartClick,
+            modifier = Modifier.size(width = 200.dp, height = 60.dp),
+            colors = ButtonDefaults.buttonColors(
+                backgroundColor = Color.Red,           // Основной цвет
+                contentColor = Color.Black,             // Цвет текста
+                disabledBackgroundColor = Color.Gray,   // Цвет при отключении
+                disabledContentColor = Color.LightGray  // Цвет текста при отключении
+            )
+        ) {
+            Text(&quot;Начать игру&quot;, fontSize = MaterialTheme.typography.h6.fontSize)
+        }
+    }
+}
+
+// Экран с игрой, шахматной доской и дополнительными элементами интерфейса
+@Composable
+fun GameScreen(onBackClick: () -&gt; Unit) {
+    Column(modifier = Modifier.fillMaxSize()) {
+        // Верхняя панель с кнопкой &quot;Назад&quot;
+        TopAppBar(
+            title = {
+                Box(
+                    modifier = Modifier.fillMaxWidth(),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Text(text = &quot;Шахматная игра&quot;)
+                }
+            },
+            navigationIcon = {
+                Button(
+                    onClick = onBackClick,
+                    modifier = Modifier
+                        .width(100.dp)     // Явное управление шириной
+                        .height(50.dp),    // Явное управление высотой
+                    contentPadding = PaddingValues(0.dp)  // Убираем внутренние отступы
+                ) {
+                    Text(
+                        text = &quot;Назад&quot;,
+                        modifier = Modifier.fillMaxWidth(),
+                        textAlign = TextAlign.Center
+                    )
+                }
+            }
+        )
+
+        // Основной контент - разделяем экран на несколько частей
+        Row(modifier = Modifier.fillMaxSize()) {
+            // Центральная часть - шахматная доска
+            ChessBoard(modifier = Modifier.weight(0.7f))
+
+            // Левая панель - информация об игре, ходах и т.д.
+            GameInfoPanel(modifier = Modifier.weight(0.3f))
+        }
+    }
+}
+
+// Панель с информацией об игре
+@Composable
+fun GameInfoPanel(modifier: Modifier = Modifier) {
+    Column(
+        modifier = modifier
+            .fillMaxHeight()
+            .padding(16.dp)
+            .background(Color.LightGray.copy(alpha = 0.2f)),
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        Text(
+            &quot;Информация об игре&quot;,
+            style = MaterialTheme.typography.h6,
+            modifier = Modifier.padding(bottom = 16.dp)
+        )
+
+        // Пример элементов панели информации
+        Card(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(vertical = 16.dp),
+            elevation = 4.dp
+        ) {
+            Column(modifier = Modifier.padding(16.dp)) {
+                Text(&quot;Текущий ход: Белые&quot;, fontWeight = FontWeight.Bold)
+                Text(&quot;Время: 00:05:32&quot;)
+            }
+        }
+
+        // Список ходов
+        Card(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(vertical = 8.dp),
+            elevation = 4.dp
+        ) {
+            Column(modifier = Modifier.padding(16.dp)) {
+                Text(
+                    text = &quot;История ходов&quot;,
+                    fontWeight = FontWeight.Bold,
+                    modifier = Modifier
+                        .fillMaxWidth() // Занимает всю ширину
+                        .padding(bottom = 16.dp)
+                        .wrapContentWidth(      // Центрирует контент
+                            align = Alignment.CenterHorizontally
+                        )
+                )
+                Text(&quot;1. e2-e4 e7-e5&quot;)
+                Text(&quot;2. Ng1-f3 Nb8-c6&quot;)
+            }
+        }
+
+        Spacer(modifier = Modifier.weight(1f))
+
+        // Кнопки управления игрой
+        Button(
+            onClick = { /* Сохранить игру */ },
+            modifier = Modifier.fillMaxWidth().padding(vertical = 4.dp)
+        ) {
+            Text(&quot;Сохранить игру&quot;)
+        }
+
+        Button(
+            onClick = { /* Сдаться */ },
+            modifier = Modifier.fillMaxWidth().padding(vertical = 4.dp),
+            colors = ButtonDefaults.buttonColors(backgroundColor = Color.Red.copy(alpha = 0.7f))
+        ) {
+            Text(&quot;Сдаться&quot;, color = Color.White)
+        }
+    }
+}
+
+// Шахматная доска (в ней мы используем элементы из прошлого примера)
+@Composable
+fun ChessBoard(modifier: Modifier = Modifier) {
+    var selectedCell by remember { mutableStateOf&lt;Pair&lt;Int, Int&gt;?&gt;(null) }
+
+    Box(
+        modifier = modifier
+            .fillMaxSize()
+            .padding(16.dp),
+        contentAlignment = Alignment.Center
+    ) {
+        // Доска
+        Column(
+            modifier = Modifier
+                .aspectRatio(1f) // Поддерживаем квадратную форму
+                .border(4.dp, Color.Blue)
+        ) {
+            for (row in 0 until 8) {
+                Row(modifier = Modifier.weight(1f)) {
+                    for (col in 0 until 8) {
+                        val isSelected = selectedCell == Pair(row, col)
+                        val cellColor = if ((row + col) % 2 == 0) Color(0xFFFF0000) else Color(0xFF000000)
+
+                        Box(
+                            modifier = Modifier
+                                .weight(1f)
+                                .fillMaxHeight()
+                                .background(color = if (isSelected) Color.Yellow else cellColor)
+                                .clickable {
+                                    selectedCell = Pair(row, col)
+                                    println(&quot;Выбрана клетка: $row, $col&quot;)
+                                },
+                            contentAlignment = Alignment.Center
+                        ) {
+                            // Отображение координат клетки (временно)
+                            Text(
+                                &quot;${('a' + col)}${8 - row}&quot;,
+                                color = if ((row + col) % 2 == 0) Color.DarkGray else Color.White,
+                                fontWeight = FontWeight.Bold
+                            )
+                        }
+                    }
+                }
+            }
+        }
+    }
+}*/
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.12.202403310830</span></div></body></html>
