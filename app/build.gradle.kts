@@ -8,16 +8,24 @@
 
 plugins {
     // Apply the org.jetbrains.kotlin.jvm Plugin to add support for Kotlin.
-    alias(libs.plugins.kotlin.jvm)
+    //alias(libs.plugins.kotlin.jvm)
+    id("org.jetbrains.kotlin.jvm") version "1.9.21"
 
     // Apply the application plugin to add support for building a CLI application in Java.
-    application
+    //application
     id("jacoco")
+    id("org.jetbrains.compose") version "1.6.1"
 }
+
+kotlin {
+    jvmToolchain(21)  // ✅ Correct way to specify JVM target
+}
+
 
 repositories {
     // Use Maven Central for resolving dependencies.
     mavenCentral()
+    google()
 }
 
 
@@ -30,10 +38,28 @@ tasks.withType<JacocoReport> {
 }
 
 dependencies {
-    // This dependency is used by the application.
-    implementation(libs.guava)
-    testImplementation("org.junit.jupiter:junit-jupiter:5.8.1")
+    implementation("org.jetbrains.kotlin:kotlin-stdlib:1.9.21")
+    implementation("org.jetbrains.kotlin:kotlin-reflect:1.9.21")
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.7.3")
+
+    implementation(compose.desktop.currentOs)
+
+
+    implementation("com.google.guava:guava:32.1.0-jre")
+
+
+    // ✅ Fix JUnit test imports
+    testImplementation("org.junit.jupiter:junit-jupiter:5.10.0")
+    testImplementation("org.jetbrains.kotlin:kotlin-test-junit5:1.9.21")  // ✅ Ensure Kotlin test framework is correct
 }
+
+
+compose.desktop {
+    application {
+        mainClass = "MainKt"
+    }
+}
+
 
 tasks.named<JacocoReport>("jacocoTestReport") {
     dependsOn(tasks.test)  // Ensure tests run before generating the report
@@ -46,13 +72,12 @@ tasks.build {
 
 testing {
     suites {
-        // Configure the built-in test suite
         val test by getting(JvmTestSuite::class) {
-            // Use Kotlin Test test framework
-            useKotlinTest("2.1.0")
+            useJUnitJupiter()  // ✅ Use standard JUnit 5 runner
         }
     }
 }
+
 
 // Apply a specific Java toolchain to ease working on different environments.
 java {
@@ -61,7 +86,3 @@ java {
     }
 }
 
-application {
-    // Define the main class for the application.
-    mainClass = "org.example.AppKt"
-}

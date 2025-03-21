@@ -5,9 +5,12 @@ import kotlin.math.abs
 
 class Board {
     val positions: MutableMap<Int, Figure> = mutableMapOf()
-    val whiteMoves: MutableMap<Pair<Int, Int>, String> = mutableMapOf()
-    val blackMoves: MutableMap<Pair<Int, Int>, String> = mutableMapOf()
+    val whiteMoves: MutableList<Pair< Pair<Int, Int>, String > > = mutableListOf()
+    val blackMoves: MutableList<Pair< Pair<Int, Int>, String > > = mutableListOf()
     var turn: Boolean = true
+    var isWhiteCastled: Boolean = false
+    var isBlackCastled: Boolean = false
+    var enpassant: Boolean = false
     var isChecked: Boolean = false
     var gameWinner: Int = 0
 
@@ -24,20 +27,32 @@ class Board {
         if(schach(copiedPositions)) return false
 
         if(turn == positions[startPosition]?.colour && (positions[startPosition]?.canMove(finalPosition) == true)) {
-            positions[startPosition]?.let{ positions[finalPosition] = it }
+            positions[startPosition]?.let{
+                positions[finalPosition] = it
+                it.position = finalPosition
+
+                if(enpassant) {
+                    if(it.colour) positions.remove(finalPosition - 8)
+                    else positions.remove(finalPosition + 8)
+
+                    enpassant = false
+                }
+            }
             positions.remove(startPosition)
 
 
             positions[startPosition]?.let{
-                val figure = if(it is Bishop) "Bishop"
-                else if(it is King) "King"
-                else if(it is Knight) "Knight"
-                else if(it is Pawn) "Pawn"
-                else if(it is Queen) "Queen"
-                else "Rook"
+                val figure = when (it) {
+                    is Bishop -> "Bishop"
+                    is King -> "King"
+                    is Knight -> "Knight"
+                    is Pawn -> "Pawn"
+                    is Queen -> "Queen"
+                    else -> "Rook"
+                }
 
-                if(turn) whiteMoves[Pair(startPosition, finalPosition)] = figure
-                else blackMoves[Pair(startPosition, finalPosition)] = figure
+                if(turn) whiteMoves.add(Pair(Pair(startPosition, finalPosition), figure))
+                else blackMoves.add(Pair(Pair(startPosition, finalPosition), figure))
             }
 
             this.turn = !turn
