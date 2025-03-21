@@ -9,6 +9,17 @@ class King(override var position: Int, override val colour: Boolean, override va
 
     override fun canMove(newPosition: Int): Boolean {
         val avaliableMoves: MutableList<Int> = mutableListOf(-1, 1, -7, 7, -8, 8, -9, 9)
+        /*if( (newPosition in listOf(2,6) && colour) || (newPosition in listOf(58,62) && !colour) ) {
+            if(colour && position != 4) TODO()
+            if(!colour && position != 60) TODO()
+            if(colour) {
+                if(newPosition == 2) {
+                    if(board.isThereFigure(1) || board.isThereFigure(2) ||
+                        board.isThereFigure(3)) TODO()
+
+                }
+            }
+        }*/
 
         if( (position / 8) == 7) avaliableMoves.removeAll(listOf(7,8,9))
         else if( (position / 8) == 0) avaliableMoves.removeAll(listOf(-7, -8, -9))
