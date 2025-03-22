@@ -7,6 +7,8 @@ class Bishop(override var position: Int, override val colour: Boolean, override 
         board.positions[position] = this
     }
 
+    override val figure = if(colour) "whiteBishop" else "blackBishop"
+
     /*override fun isThereFigure(location: Int): Boolean {
         return location in board.positions
     }*/

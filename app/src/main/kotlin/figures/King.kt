@@ -7,6 +7,8 @@ class King(override var position: Int, override val colour: Boolean, override va
         board.positions[position] = this
     }
 
+    override val figure = if(colour) "whiteKing" else "blackKing"
+
     override fun canMove(newPosition: Int): Boolean {
         val avaliableMoves: MutableList<Int> = mutableListOf(-1, 1, -7, 7, -8, 8, -9, 9)
         /*if( (newPosition in listOf(2,6) && colour) || (newPosition in listOf(58,62) && !colour) ) {

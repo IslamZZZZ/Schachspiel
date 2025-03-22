@@ -7,6 +7,8 @@ class Queen(override var position: Int, override val colour: Boolean, override v
         board.positions[position] = this
     }
 
+    override val figure = if(colour) "whiteQueen" else "blackQueen"
+
     private fun isThereObstacle_BISHOP(start: Int, end: Int): Boolean {
         val dif = end - start
         val sign = dif.sign

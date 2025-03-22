@@ -7,6 +7,10 @@ class Rook(override var position: Int, override val colour: Boolean, override va
         board.positions[position] = this
     }
 
+
+    override val figure = if(colour) "whiteRook" else "blackRook"
+
+
     /*override fun isThereFigure(location: Int): Boolean {
         return location in board.positions
     }*/

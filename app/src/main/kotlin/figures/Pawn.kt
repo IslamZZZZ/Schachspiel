@@ -8,6 +8,8 @@ class Pawn(override var position: Int, override val colour: Boolean, override va
         board.positions[position] = this
     }
 
+    override val figure = if(colour) "whitePawn" else "blackPawn"
+
     /*override fun isThereFigure(location: Int): Boolean {
         TODO()
     }*/
