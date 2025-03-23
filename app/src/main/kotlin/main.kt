@@ -1,3 +1,4 @@
+import Board.Board
 import androidx.compose.desktop.ui.tooling.preview.Preview
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
@@ -14,10 +15,16 @@ import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Window
 import androidx.compose.ui.window.application
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
+import figures.*
 
 
 data class Language(val code: String, val name: String)
@@ -34,15 +41,19 @@ val availableLanguages = listOf(
     Language("de", "Deutsch")
 )
 
+
+
 // Список доступных языков
 fun main() = application {
     var currentScreen by remember { mutableStateOf(Screen.START) }
+    val board = remember { Board() }
+    board.setup()
 
     Window(onCloseRequest = ::exitApplication, title = "Das Schachspiel") {
         MaterialTheme {
                 when(currentScreen) {
                     Screen.START -> StartScreen( { currentScreen = Screen.GAME } )
-                    Screen.GAME -> GameScreen( { currentScreen = Screen.START } )
+                    Screen.GAME -> GameScreen( { currentScreen = Screen.START }, board )
                 }
         }
     }
@@ -188,21 +199,488 @@ fun bokovayaPanel(colour: Boolean) {
 }
 
 @Composable
-fun GameScreen(onStartClick: () -> Unit) {
+fun GameScreen(onStartClick: () -> Unit, board: Board) {
+    Box(modifier = Modifier.fillMaxSize().background(Color(0xFFffdfdf))) {
 
-    Box(
-        modifier = Modifier.height(80.dp).background(Color.Cyan).fillMaxWidth()
-    ) {
-        Box(modifier = Modifier.align(Alignment.TopStart)) {
-            standartButton(onStartClick, "Züruck", Color.Red)
+        Box(
+            modifier = Modifier
+                .background(Color(0xFF3d3d3d))
+                .height(80.dp)
+                .fillMaxWidth()
+        ) {
+            Box(modifier = Modifier.align(Alignment.CenterStart)) {
+                Text(
+                    "Шахматная Партия",
+                    textAlign = TextAlign.Center,
+                    fontSize = 30.sp,
+                    fontWeight = FontWeight.Bold,
+                    color = Color.White,
+                    modifier = Modifier.padding(start = 20.dp)
+                )
+            }
+            Box(modifier = Modifier.align(Alignment.CenterEnd).padding(vertical = 20.dp)) { dropLangMenu() }
+
         }
 
-       Box(modifier = Modifier.align(Alignment.TopEnd)) {
-            dropLangMenu()
-       }
-    }
+        Column(
+            modifier = Modifier
+                .align(Alignment.CenterStart)
+                .fillMaxSize(0.45f)
+                .aspectRatio(1f)
+                .padding(start = 120.dp, top = 50.dp)
+                .border(width = 1.dp, color = Color.Blue)
+        ) {
+            var selectedPosition by remember { mutableStateOf<Int?>(null) }
+            var takenFigure by remember { mutableStateOf(false) }
 
+            for(rows in 1..8) {
+
+                Row(
+                    modifier = Modifier
+                        .weight(0.125f)
+                        .fillMaxWidth()
+                ) {
+                    for(sq in 0..7) {
+                        val square = 64 - rows * 8 + sq
+                        val colour = if( ( (square / 8) + (square % 8) ) % 2 == 1) Color.Red else Color.Blue
+                        Box(contentAlignment = Alignment.Center,
+                            modifier = Modifier
+                                .background(if(selectedPosition == square) Color.Green else colour)
+                                .weight(0.125f)
+                                .fillMaxSize()
+                                .clickable(onClick = {
+                                    if(selectedPosition == null && board.isThereFigure(square)) {
+                                        selectedPosition = square
+                                    }
+                                    else if(selectedPosition != null) {
+                                        selectedPosition?.let{
+                                            board.move(it, square)
+                                        }
+                                        selectedPosition = null
+                                    }
+                                })
+                        ) {
+                            if(square in board.composePositions.value.keys) {
+                                board.composePositions.value[square]?.let {
+                                    ChessImage(it.figure)
+                                }
+
+                            }
+                            Text(board.fromDigToNot(square))
+                        }
+                    }
+                }
+            }
+
+        }
+
+
+        Box(
+            modifier = Modifier
+                .fillMaxWidth(0.5f)
+                .align(Alignment.CenterEnd)
+        ) {
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth(0.45f)
+                    .align(Alignment.CenterStart)
+            ) {
+                Column(
+                    modifier = Modifier
+                        .border(width = 3.dp, color = Color.Black, shape = RoundedCornerShape(8.dp))
+                        .fillMaxWidth().padding(10.dp),
+                    horizontalAlignment = Alignment.CenterHorizontally
+                ) {
+                    Text("Player 1", fontWeight = FontWeight.Bold)
+                    Spacer(modifier = Modifier.padding(10.dp))
+                    Text("Rating: 1500")
+                    Spacer(modifier = Modifier.padding(10.dp))
+                    Column(
+                        modifier = Modifier
+                            .size(width = 120.dp, height = 40.dp)
+                            .background(Color.Yellow)
+                    ) {
+
+                    }
+                }
+
+
+
+                Spacer(modifier = Modifier.padding(10.dp))
+
+
+                Column(
+                    modifier = Modifier
+                        .border(width = 3.dp, color = Color.Black, shape = RoundedCornerShape(8.dp))
+                        .fillMaxWidth().padding(10.dp),
+                    horizontalAlignment = Alignment.CenterHorizontally
+                ) {
+                    Text("Player 2", fontWeight = FontWeight.Bold)
+                    Spacer(modifier = Modifier.padding(10.dp))
+                    Text("Rating: 1500")
+                    Spacer(modifier = Modifier.padding(10.dp))
+                    Column(
+                        modifier = Modifier
+                            .size(width = 120.dp, height = 40.dp)
+                            .background(Color.Yellow)
+                    ) {
+
+                    }
+                }
+
+                Spacer(modifier = Modifier.padding(5.dp))
+
+                Button(
+                    onClick = { board.reset() },
+                    modifier = Modifier.fillMaxWidth(),
+                    colors = ButtonDefaults.buttonColors(backgroundColor = Color.Green)
+                ) {
+                    Text("Обновить игру", fontSize = 23.sp, color = Color.Black, fontWeight = FontWeight.Bold)
+                }
+
+                Spacer(modifier = Modifier.padding(5.dp))
+
+                Button(
+                    onClick = {  },
+                    modifier = Modifier.fillMaxWidth(),
+                    colors = ButtonDefaults.buttonColors(backgroundColor = Color.Yellow)
+                ) {
+                    Text("Сдаться", fontSize = 23.sp, color = Color.Black, fontWeight = FontWeight.Bold)
+                }
+
+                Spacer(modifier = Modifier.padding(5.dp))
+
+                Button(
+                    onClick = {  },
+                    modifier = Modifier.fillMaxWidth(),
+                    colors = ButtonDefaults.buttonColors(backgroundColor = Color.Blue)
+                ) {
+                    Text("Предложить ничью", fontSize = 23.sp, color = Color.Black, fontWeight = FontWeight.Bold)
+                }
+
+                Spacer(modifier = Modifier.padding(5.dp))
+
+                Button(
+                    onClick = {  },
+                    modifier = Modifier.fillMaxWidth(),
+                    colors = ButtonDefaults.buttonColors(backgroundColor = Color.Blue)
+                ) {
+                    Text("Сохранить игру", fontSize = 23.sp, color = Color.Black, fontWeight = FontWeight.Bold)
+                }
+
+                Spacer(modifier = Modifier.padding(5.dp))
+
+                Text("Turn: ${board.turn}", fontSize = 20.sp, modifier = Modifier
+                    .border(width = 3.dp, color = Color.Black)
+                    .fillMaxWidth()
+                    .height(40.dp)
+                    .background(Color.Cyan)
+                    .wrapContentHeight(align = Alignment.CenterVertically)
+                    .wrapContentWidth(align = Alignment.CenterHorizontally),
+                    fontWeight = FontWeight.Bold
+                )
+
+                Spacer(modifier = Modifier.padding(20.dp))
+
+                Button (
+                    onClick = onStartClick,
+                    modifier = Modifier.fillMaxWidth().height(60.dp),
+                    colors = ButtonDefaults.buttonColors(backgroundColor = Color.Transparent)
+                ) {
+                    Text("Назад", fontSize = 23.sp, color = Color.Black, fontWeight = FontWeight.Bold)
+                }
+            }
+
+            Column(
+                modifier = Modifier
+                    .align(Alignment.CenterEnd)
+                    .fillMaxWidth(0.45f)
+            ) {
+                Card(
+                    elevation = 4.dp,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(10.dp)
+                ) {
+                    Column {
+                        Row(modifier = Modifier.height(40.dp).background(Color(0xFFd5d5d5)),
+                            verticalAlignment = Alignment.CenterVertically) {
+                            Text("Запись ходов",
+                                fontSize = 23.sp,
+                                fontWeight = FontWeight.Bold,
+                                modifier = Modifier.fillMaxWidth(),
+                                textAlign = TextAlign.Center
+                            )
+                        }
+
+                        val listState = rememberLazyListState()
+                        LaunchedEffect(board.whiteMoves.size) {
+                            if(board.whiteMoves.size > 0) {
+                                listState.animateScrollToItem(board.whiteMoves.size - 1)
+                            }
+                        }
+
+                        LazyColumn(
+                            modifier = Modifier
+                                .heightIn(max = 320.dp)
+                                .fillMaxWidth(),
+                            state = listState
+                        ) {
+                            items(count = board.whiteMoves.size) { item ->
+                                Row(
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .height(30.dp)
+                                        .border(0.15.dp, color = Color.Black)
+                                        .background(Color(0xFFfff6f6))
+                                ) {
+                                    Text(
+                                        "${item + 1}.",
+                                        modifier = Modifier
+                                            .fillMaxHeight()
+                                            .weight(0.2f)
+                                            .border(0.15.dp, color = Color.Black),
+                                        textAlign = TextAlign.Center
+                                    )
+
+                                    Text(
+                                        "${board.whiteMoves[item].second}: " +
+                                                board.fromDigToNot(board.whiteMoves[item].first.first) +
+                                                " - " +
+                                                board.fromDigToNot(board.whiteMoves[item].first.second),
+                                        modifier = Modifier
+                                            .fillMaxHeight()
+                                            .weight(0.4f),
+                                        textAlign = TextAlign.Center
+                                    )
+
+                                    Text(
+                                        if(board.blackMoves.size > item)
+                                            "${board.blackMoves[item].second}: " +
+                                                    board.fromDigToNot(board.blackMoves[item].first.first) +
+                                                    " - " +
+                                                    board.fromDigToNot(board.blackMoves[item].first.second) else "",
+                                        modifier = Modifier
+                                            .fillMaxHeight()
+                                            .weight(0.4f),
+                                        textAlign = TextAlign.Center
+                                    )
+                                }
+                            }
+                        }
+                    }
+
+
+                }
+            }
+        }
+            }
+
+            /*Column(
+                modifier = Modifier
+                    .border(width = 3.dp, color = Color.Black, shape = RoundedCornerShape(8.dp))
+                    .fillMaxWidth().padding(10.dp),
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                Text("Player 1", fontWeight = FontWeight.Bold)
+                Spacer(modifier = Modifier.padding(10.dp))
+                Text("Rating: 1500")
+                Spacer(modifier = Modifier.padding(10.dp))
+                Column(
+                    modifier = Modifier
+                        .size(width = 120.dp, height = 40.dp)
+                        .background(Color.Yellow)
+                ) {
+
+                }
+            }
+
+            Spacer(modifier = Modifier.padding(10.dp))
+
+            Card(
+                elevation = 4.dp,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(10.dp)
+            ) {
+                Column {
+                    Row(modifier = Modifier.height(40.dp).background(Color(0xFFd5d5d5)),
+                        verticalAlignment = Alignment.CenterVertically) {
+                        Text("Запись ходов",
+                            fontSize = 23.sp,
+                            fontWeight = FontWeight.Bold,
+                            modifier = Modifier.fillMaxWidth(),
+                            textAlign = TextAlign.Center
+                        )
+                    }
+
+                    val listState = rememberLazyListState()
+                    LaunchedEffect(board.whiteMoves.size) {
+                        if(board.whiteMoves.size > 0) {
+                            listState.animateScrollToItem(board.whiteMoves.size - 1)
+                        }
+                    }
+
+                    LazyColumn(
+                        modifier = Modifier
+                            .heightIn(max = 320.dp)
+                            .fillMaxWidth(),
+                        state = listState
+                    ) {
+                        items(count = board.whiteMoves.size) { item ->
+                            Row(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .height(30.dp)
+                                    .border(0.15.dp, color = Color.Black)
+                                    .background(Color(0xFFfff6f6))
+                            ) {
+                                Text(
+                                    "${item + 1}.",
+                                    modifier = Modifier
+                                        .fillMaxHeight()
+                                        .weight(0.2f)
+                                        .border(0.15.dp, color = Color.Black),
+                                        textAlign = TextAlign.Center
+                                )
+
+                                Text(
+                                    "${board.whiteMoves[item].second}: " +
+                                            board.fromDigToNot(board.whiteMoves[item].first.first) +
+                                            " - " +
+                                            board.fromDigToNot(board.whiteMoves[item].first.second),
+                                    modifier = Modifier
+                                        .fillMaxHeight()
+                                        .weight(0.4f),
+                                    textAlign = TextAlign.Center
+                                )
+
+                                Text(
+                                    if(board.blackMoves.size > item)
+                                        "${board.blackMoves[item].second}: " +
+                                            board.fromDigToNot(board.blackMoves[item].first.first) +
+                                            " - " +
+                                            board.fromDigToNot(board.blackMoves[item].first.second) else "",
+                                    modifier = Modifier
+                                        .fillMaxHeight()
+                                        .weight(0.4f),
+                                    textAlign = TextAlign.Center
+                                )
+                            }
+                        }
+                    }
+                }
+
+
+            }
+
+            Spacer(modifier = Modifier.padding(10.dp))
+
+
+            Column(
+                modifier = Modifier
+                    .border(width = 3.dp, color = Color.Black, shape = RoundedCornerShape(8.dp))
+                    .fillMaxWidth().padding(10.dp),
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                Text("Player 2", fontWeight = FontWeight.Bold)
+                Spacer(modifier = Modifier.padding(10.dp))
+                Text("Rating: 1500")
+                Spacer(modifier = Modifier.padding(10.dp))
+                Column(
+                    modifier = Modifier
+                        .size(width = 120.dp, height = 40.dp)
+                        .background(Color.Yellow)
+                ) {
+
+                }
+            }
+
+            Spacer(modifier = Modifier.padding(5.dp))
+
+            Button(
+                onClick = { board.reset() },
+                modifier = Modifier.fillMaxWidth(),
+                colors = ButtonDefaults.buttonColors(backgroundColor = Color.Green)
+            ) {
+                Text("Обновить игру", fontSize = 23.sp, color = Color.Black, fontWeight = FontWeight.Bold)
+            }
+
+            Spacer(modifier = Modifier.padding(5.dp))
+
+            Button(
+                onClick = {  },
+                modifier = Modifier.fillMaxWidth(),
+                colors = ButtonDefaults.buttonColors(backgroundColor = Color.Yellow)
+            ) {
+                Text("Сдаться", fontSize = 23.sp, color = Color.Black, fontWeight = FontWeight.Bold)
+            }
+
+            Spacer(modifier = Modifier.padding(5.dp))
+
+            Button(
+                onClick = {  },
+                modifier = Modifier.fillMaxWidth(),
+                colors = ButtonDefaults.buttonColors(backgroundColor = Color.Blue)
+            ) {
+                Text("Предложить ничью", fontSize = 23.sp, color = Color.Black, fontWeight = FontWeight.Bold)
+            }
+
+            Spacer(modifier = Modifier.padding(5.dp))
+
+            Button(
+                onClick = {  },
+                modifier = Modifier.fillMaxWidth(),
+                colors = ButtonDefaults.buttonColors(backgroundColor = Color.Blue)
+            ) {
+                Text("Сохранить игру", fontSize = 23.sp, color = Color.Black, fontWeight = FontWeight.Bold)
+            }
+
+            Spacer(modifier = Modifier.padding(5.dp))
+
+            Text("Turn: ${board.turn}", fontSize = 20.sp, modifier = Modifier
+                .border(width = 3.dp, color = Color.Black)
+                .fillMaxWidth()
+                .height(40.dp)
+                .background(Color.Cyan)
+                .wrapContentHeight(align = Alignment.CenterVertically)
+                .wrapContentWidth(align = Alignment.CenterHorizontally),
+                fontWeight = FontWeight.Bold
+            )
+
+            Spacer(modifier = Modifier.padding(20.dp))
+
+            Button (
+                onClick = onStartClick,
+                modifier = Modifier.fillMaxWidth().height(60.dp),
+                colors = ButtonDefaults.buttonColors(backgroundColor = Color.Transparent)
+            ) {
+                Text("Назад", fontSize = 23.sp, color = Color.Black, fontWeight = FontWeight.Bold)
+            }
+        }
+    }*/
 }
+
+
+@Composable
+fun ChessImage(figure: String) {
+    when(figure) {
+        "whitePawn" -> Image(painter = painterResource("white-pawn.svg"), contentDescription = "White Pawn")
+        "blackPawn" -> Image(painter = painterResource("black-pawn.svg"), contentDescription = "Black Pawn")
+        "whiteRook" -> Image(painter = painterResource("white-rook.svg"), contentDescription = "White Rook")
+        "blackRook" -> Image(painter = painterResource("black-rook.svg"), contentDescription = "Black Rook")
+        "whiteKnight" -> Image(painter = painterResource("white-knight.svg"), contentDescription = "White Knight")
+        "blackKnight" -> Image(painter = painterResource("black-knight.svg"), contentDescription = "Black Knight")
+        "whiteBishop" -> Image(painter = painterResource("white-bishop.svg"), contentDescription = "White Bishop")
+        "blackBishop" -> Image(painter = painterResource("black-bishop.svg"), contentDescription = "Black Bishop")
+        "whiteKing" -> Image(painter = painterResource("white-king.svg"), contentDescription = "White King")
+        "blackKing" -> Image(painter = painterResource("black-king.svg"), contentDescription = "Black King")
+        "whiteQueen" -> Image(painter = painterResource("white-queen.svg"), contentDescription = "White Queen")
+        "blackQueen" -> Image(painter = painterResource("black-queen.svg"), contentDescription = "Black Queen")
+        else -> Image(painter = painterResource("white-pawn.svg"), contentDescription = "White Pawn")
+    }
+}
+
 
 /*data class Language(val code: String, val name: String)
 

@@ -7,6 +7,8 @@ class Queen(override var position: Int, override val colour: Boolean, override v
         board.positions[position] = this
     }
 
+    override val figure = if(colour) "whiteQueen" else "blackQueen"
+
     private fun isThereObstacle_BISHOP(start: Int, end: Int): Boolean {
         val dif = end - start
         val sign = dif.sign
@@ -19,7 +21,7 @@ class Queen(override var position: Int, override val colour: Boolean, override v
                     ( (sign == 1) && (dif % 9 == 0) ) ) &&
             (end % 8 <= start % 8)) return true
 
-        val jump = if(end - start % 9 == 0) 9 else 7
+        val jump = if( (end - start) % 9 == 0) 9 else 7
         //we jump to the right(9/-7) or to the left(7/-9)
         var i = 1
         while(start + sign * i * jump != end) if(board.isThereFigure(start + sign * i++ * jump)) return true
@@ -51,7 +53,7 @@ class Queen(override var position: Int, override val colour: Boolean, override v
             }
         }
 
-        else if( ((newPosition - position) % 7 == 0) || ((newPosition - position) % 9 == 0) ) {
+        else if( ( (newPosition - position) % 7 == 0) || ( (newPosition - position) % 9 == 0) ) {
             if (!isThereObstacle_BISHOP(position, newPosition)) {
                 return !(board.isThereFigure(newPosition) && board.positions[newPosition]?.colour == colour)
             }

@@ -8,6 +8,8 @@ class Pawn(override var position: Int, override val colour: Boolean, override va
         board.positions[position] = this
     }
 
+    override val figure = if(colour) "whitePawn" else "blackPawn"
+
     /*override fun isThereFigure(location: Int): Boolean {
         TODO()
     }*/
@@ -27,15 +29,17 @@ class Pawn(override var position: Int, override val colour: Boolean, override va
             //We've not moved or there's obstacle right before our canMove - we can't canMove
         }
         else if( (abs(dif) == 8 - sign && position % 8 != 0) || (abs(dif) == 8 + sign && position % 8 != 7) ) {
-            if(board.positions[newPosition]?.colour != board.turn) return true
+            if(board.positions[newPosition]?.colour == !board.turn) return true
             if(!board.isThereFigure(newPosition)) {
                 if(board.turn && (position / 8 == 4)) {
                     if(board.blackMoves.last().first.first == newPosition + 8 &&
                         board.blackMoves.last().second == "Pawn") board.enpassant = true
+                    else return false
                 }
                 else if(!board.turn && (position / 8 == 3)) {
                     if(board.whiteMoves.last().first.first == newPosition - 8 &&
                         board.whiteMoves.last().second == "Pawn") board.enpassant = true
+                    else return false
                 }
                 else return false
             }

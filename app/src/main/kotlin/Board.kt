@@ -1,5 +1,6 @@
 package Board
 
+import androidx.compose.runtime.*
 import figures.*
 import kotlin.math.abs
 
@@ -7,12 +8,18 @@ class Board {
     val positions: MutableMap<Int, Figure> = mutableMapOf()
     val whiteMoves: MutableList<Pair< Pair<Int, Int>, String > > = mutableListOf()
     val blackMoves: MutableList<Pair< Pair<Int, Int>, String > > = mutableListOf()
-    var turn: Boolean = true
+    var turn by mutableStateOf(true)
     var isWhiteCastled: Boolean = false
     var isBlackCastled: Boolean = false
     var enpassant: Boolean = false
     var isChecked: Boolean = false
     var gameWinner: Int = 0
+
+    val composePositions = mutableStateOf(emptyMap<Int, Figure>())
+
+    /*init {
+        setup()
+    }*/
 
     fun isThereFigure(position: Int): Boolean {
         return position in positions
@@ -21,10 +28,10 @@ class Board {
     fun move(startPosition: Int, finalPosition: Int): Boolean {
         if(!isThereFigure(startPosition)) return false
 
-        val copiedPositions = positions.toMutableMap()
+        /*val copiedPositions = positions.toMutableMap()
         copiedPositions[startPosition]?.let { copiedPositions[finalPosition] = it }
         copiedPositions.remove(startPosition)
-        if(schach(copiedPositions)) return false
+        if(schach(copiedPositions)) return false*/
 
         if(turn == positions[startPosition]?.colour && (positions[startPosition]?.canMove(finalPosition) == true)) {
             positions[startPosition]?.let{
@@ -38,7 +45,6 @@ class Board {
                     enpassant = false
                 }
             }
-            positions.remove(startPosition)
 
 
             positions[startPosition]?.let{
@@ -55,12 +61,32 @@ class Board {
                 else blackMoves.add(Pair(Pair(startPosition, finalPosition), figure))
             }
 
+            positions.remove(startPosition)
+
             this.turn = !turn
+
+            updateComposePosition()
+            println("has moved from $startPosition to $finalPosition")
 
             return true
         }
 
         return false
+    }
+
+    fun fromDigToNot(square: Int): String {
+        val letter = when(square % 8) {
+            0 -> "a"
+            1 -> "b"
+            2 -> "c"
+            3 -> "d"
+            4 -> "e"
+            5 -> "f"
+            6 -> "g"
+            else -> "h"
+        }
+
+        return "${letter}${ (square / 8) + 1}"
     }
 
     fun schach(copiedPositions: MutableMap<Int, Figure>): Boolean {
@@ -70,123 +96,20 @@ class Board {
             for(fig in positions.values) if(fig.colour != it.colour && fig.canMove(it.position)) return true
         }
 
-        //Как сделать для коня? Надо заменить canMove на canMove(а то у нас проблема, что вызов функции вызывает само
-        //движение, хотя порой нам нужно знать лишь может ль фигура туда пойти)
-        //перенести последние строки перемещения в Board(они все одинаковые)
-        //далее ищем всех вражеских коней, и в canMove ставим положение короля, если true
-        //то очевидно, что шах, а иначе шаха от коня нету
-        //Так наверное можно для всех фигур противоположного цвета сделать
-        //и по идее это не должно быть ресурснозатратно относительно того, что я уже сделал
-
-        /*king?.let {
-            var pos = it.position + 8
-            while(pos < 64) {
-                if(pos in copiedPositions) {
-                    val fig = copiedPositions[pos]
-                    if(abs(pos - it.position) == 8 && fig is King) return true
-                    if(fig?.colour == this.turn || fig is Pawn || fig is Knight || fig is Bishop) break
-                    else return true
-                }
-                pos += 8
-            }
-        }
-
-        king?.let {
-            var pos = it.position - 8
-            while(pos > -1) {
-                if(pos in copiedPositions) {
-                    val fig = copiedPositions[pos]
-                    if(abs(pos - it.position) == 8 && fig is King) return true
-                    if(fig?.colour == this.turn || fig is Pawn || fig is Knight || fig is Bishop) break
-                    else return true
-                }
-                pos -= 8
-            }
-        }
-
-        king?.let {
-            var pos = it.position + 1
-            while( (pos / 8) == (it.position / 8) ) {
-                if(pos in copiedPositions) {
-                    val fig = copiedPositions[pos]
-                    if(abs(pos - it.position) == 1 && fig is King) return true
-                    if(fig?.colour == this.turn || fig is Pawn || fig is Knight || fig is Bishop) break
-                    else return true
-                }
-                pos += 1
-            }
-        }
-
-        king?.let {
-            var pos = it.position - 1
-            while( (pos / 8) == (it.position / 8) ) {
-                if(pos in copiedPositions) {
-                    val fig = copiedPositions[pos]
-                    if(abs(pos - it.position) == 1 && fig is King) return true
-                    if(fig?.colour == this.turn || fig is Pawn || fig is Knight || fig is Bishop) break
-                    else return true
-                }
-                pos -= 1
-            }
-        }
-
-        king?.let {
-            var pos = it.position + 9
-            while( (pos % 8) > (it.position % 8) ) {
-                if(pos in copiedPositions) {
-                    val fig = copiedPositions[pos]
-                    if(abs(pos - it.position) == 9 && (fig is Pawn || fig is King)) return true
-                    if(fig?.colour == this.turn || fig is Pawn || fig is Knight || fig is Rook) break
-                    else return true
-                }
-                pos += 9
-            }
-        }
-
-        king?.let {
-            var pos = it.position - 9
-            while( (pos % 8) < (it.position % 8) ) {
-                if(pos in copiedPositions) {
-                    val fig = copiedPositions[pos]
-                    if(abs(pos - it.position) == 9 && (fig is Pawn || fig is King)) return true
-                    if(fig?.colour == this.turn || fig is Pawn || fig is Knight || fig is Rook) break
-                    else return true
-                }
-                pos -= 9
-            }
-        }
-
-        king?.let {
-            var pos = it.position + 7
-            while( (pos % 8) < (it.position % 8) ) {
-                if(pos in copiedPositions) {
-                    val fig = copiedPositions[pos]
-                    if(abs(pos - it.position) == 7 && (fig is Pawn || fig is King)) return true
-                    if(fig?.colour == this.turn || fig is Pawn || fig is Knight || fig is Rook) break
-                    else return true
-                }
-                pos += 7
-            }
-        }
-
-        king?.let {
-            var pos = it.position - 7
-            while( (pos % 8) > (it.position % 8) ) {
-                if(pos in copiedPositions) {
-                    val fig = copiedPositions[pos]
-                    if(abs(pos - it.position) == 7 && (fig is Pawn || fig is King)) return true
-                    if(fig?.colour == this.turn || fig is Pawn || fig is Knight || fig is Rook) break
-                    else return true
-                }
-                pos -= 7
-            }
-        }*/
-
         return false
     }
 
     fun clean() {
         this.positions.clear()
+    }
+
+    fun reset() {
+        this.clean()
+        this.setup()
+        this.turn = true
+        whiteMoves.clear()
+        blackMoves.clear()
+        updateComposePosition()
     }
 
     fun setup() {
@@ -195,18 +118,24 @@ class Board {
             if(i == 0 || i == 7) Rook(i, true, this)
             else if(i == 1 || i == 6) Knight(i, true, this)
             else if(i == 2 || i == 5) Bishop(i, true, this)
-            else if(i == 4) Queen(i, true, this)
+            else if(i == 3) Queen(i, true, this)
             else King(i, true, this)
         }
 
         for(i in 48..55) Pawn(i, false, this)
         for(i in 56..63) {
-            if(i == 56 || i == 63) Rook(i, true, this)
-            else if(i == 57 || i == 62) Knight(i, true, this)
-            else if(i == 58 || i == 61) Bishop(i, true, this)
-            else if(i == 59) Queen(i, true, this)
-            else King(i, true, this)
+            if(i == 56 || i == 63) Rook(i, false, this)
+            else if(i == 57 || i == 62) Knight(i, false, this)
+            else if(i == 58 || i == 61) Bishop(i, false, this)
+            else if(i == 59) Queen(i, false, this)
+            else King(i, false, this)
         }
+
+        updateComposePosition()
+    }
+
+    fun updateComposePosition() {
+        composePositions.value = positions.toMap()
     }
 }
 
