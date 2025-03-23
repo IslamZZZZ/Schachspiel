@@ -46,6 +46,7 @@ val availableLanguages = listOf(
 fun main() = application {
     var currentScreen by remember { mutableStateOf(Screen.START) }
     val board = remember { Board() }
+    board.setup()
 
     Window(onCloseRequest = ::exitApplication, title = "Das Schachspiel") {
         MaterialTheme {
@@ -218,12 +219,6 @@ fun GameScreen(onStartClick: () -> Unit, board: Board) {
             }
             Box(modifier = Modifier.align(Alignment.CenterEnd).padding(vertical = 20.dp)) { dropLangMenu() }
 
-            Button(
-                onClick = { board.reset() },
-                modifier = Modifier.align(Alignment.Center).background(Color.Red)
-            ) {
-                Text("Обновить игру", fontSize = 23.sp)
-            }
         }
 
         Column(
@@ -246,14 +241,14 @@ fun GameScreen(onStartClick: () -> Unit, board: Board) {
                 ) {
                     for(sq in 0..7) {
                         val square = 64 - rows * 8 + sq
-                        val colour = if( ( (square / 8) + (square % 8) ) % 2 == 1) Color.White else Color.Black
+                        val colour = if( ( (square / 8) + (square % 8) ) % 2 == 1) Color.Red else Color.Blue
                         Box(contentAlignment = Alignment.Center,
                             modifier = Modifier
-                                .background(if(selectedPosition == square) Color.Red else colour)
+                                .background(if(selectedPosition == square) Color.Green else colour)
                                 .weight(0.125f)
                                 .fillMaxSize()
                                 .clickable(onClick = {
-                                    if(selectedPosition == null) {
+                                    if(selectedPosition == null && board.isThereFigure(square)) {
                                         selectedPosition = square
                                     }
                                     else if(selectedPosition != null) {
@@ -268,17 +263,20 @@ fun GameScreen(onStartClick: () -> Unit, board: Board) {
                                 board.composePositions.value[square]?.let {
                                     ChessImage(it.figure)
                                 }
+
                             }
+                            //Text("$square")
                         }
                     }
                 }
             }
+
         }
 
 
         Column(
             modifier = Modifier
-                .fillMaxWidth(0.15f)
+                .fillMaxWidth(0.25f)
                 .align(Alignment.CenterEnd)
         ) {
             Column(
@@ -324,7 +322,7 @@ fun GameScreen(onStartClick: () -> Unit, board: Board) {
                             .heightIn(max = 320.dp)
                             .fillMaxWidth()
                     ) {
-                        items(count = 20) { item ->
+                        items(count = board.whiteMoves.size) { item ->
                             Row(
                                 modifier = Modifier
                                     .fillMaxWidth()
@@ -341,7 +339,8 @@ fun GameScreen(onStartClick: () -> Unit, board: Board) {
                                         textAlign = TextAlign.Center
                                 )
                                 Text(
-                                    "e4",
+                                    "${board.whiteMoves[item].second}: " +
+                                            "${board.whiteMoves[item].first.first} - ${board.whiteMoves[item].first.second}",
                                     modifier = Modifier
                                         .fillMaxHeight()
                                         .weight(0.4f),
@@ -383,6 +382,48 @@ fun GameScreen(onStartClick: () -> Unit, board: Board) {
 
                 }
             }
+
+            Spacer(modifier = Modifier.padding(5.dp))
+
+            Button(
+                onClick = { board.reset() },
+                modifier = Modifier.fillMaxWidth(),
+                colors = ButtonDefaults.buttonColors(backgroundColor = Color.Green)
+            ) {
+                Text("Обновить игру", fontSize = 23.sp, color = Color.Black, fontWeight = FontWeight.Bold)
+            }
+
+            Spacer(modifier = Modifier.padding(5.dp))
+
+            Button(
+                onClick = {  },
+                modifier = Modifier.fillMaxWidth(),
+                colors = ButtonDefaults.buttonColors(backgroundColor = Color.Yellow)
+            ) {
+                Text("Сдаться", fontSize = 23.sp, color = Color.Black, fontWeight = FontWeight.Bold)
+            }
+
+            Spacer(modifier = Modifier.padding(5.dp))
+
+            Button(
+                onClick = {  },
+                modifier = Modifier.fillMaxWidth(),
+                colors = ButtonDefaults.buttonColors(backgroundColor = Color.Blue)
+            ) {
+                Text("Предложить ничью", fontSize = 23.sp, color = Color.Black, fontWeight = FontWeight.Bold)
+            }
+
+            Spacer(modifier = Modifier.padding(5.dp))
+
+            Text("Turn: ${board.turn}", fontSize = 20.sp, modifier = Modifier
+                .border(width = 3.dp, color = Color.Black)
+                .fillMaxWidth()
+                .height(60.dp)
+                .background(Color.Cyan)
+                .wrapContentHeight(align = Alignment.CenterVertically)
+                .wrapContentWidth(align = Alignment.CenterHorizontally),
+                fontWeight = FontWeight.Bold
+            )
         }
     }
 }

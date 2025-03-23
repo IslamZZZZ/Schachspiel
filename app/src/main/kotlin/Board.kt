@@ -5,10 +5,10 @@ import figures.*
 import kotlin.math.abs
 
 class Board {
-    val positions: MutableMap<Int, Figure> = mutableStateMapOf()
+    val positions: MutableMap<Int, Figure> = mutableMapOf()
     val whiteMoves: MutableList<Pair< Pair<Int, Int>, String > > = mutableListOf()
     val blackMoves: MutableList<Pair< Pair<Int, Int>, String > > = mutableListOf()
-    var turn: Boolean = true
+    var turn by mutableStateOf(true)
     var isWhiteCastled: Boolean = false
     var isBlackCastled: Boolean = false
     var enpassant: Boolean = false
@@ -17,9 +17,9 @@ class Board {
 
     val composePositions = mutableStateOf(emptyMap<Int, Figure>())
 
-    init {
+    /*init {
         setup()
-    }
+    }*/
 
     fun isThereFigure(position: Int): Boolean {
         return position in positions
@@ -28,17 +28,16 @@ class Board {
     fun move(startPosition: Int, finalPosition: Int): Boolean {
         if(!isThereFigure(startPosition)) return false
 
-        val copiedPositions = positions.toMutableMap()
+        /*val copiedPositions = positions.toMutableMap()
         copiedPositions[startPosition]?.let { copiedPositions[finalPosition] = it }
         copiedPositions.remove(startPosition)
-        if(schach(copiedPositions)) return false
+        if(schach(copiedPositions)) return false*/
 
         if(turn == positions[startPosition]?.colour && (positions[startPosition]?.canMove(finalPosition) == true)) {
             positions[startPosition]?.let{
                 positions[finalPosition] = it
                 it.position = finalPosition
 
-                //canMove вызывается позже, надо что-то с этим сделать
                 if(enpassant) {
                     if(it.colour) positions.remove(finalPosition - 8)
                     else positions.remove(finalPosition + 8)
@@ -93,6 +92,9 @@ class Board {
         this.clean()
         this.setup()
         this.turn = true
+        whiteMoves.clear()
+        blackMoves.clear()
+        updateComposePosition()
     }
 
     fun setup() {
