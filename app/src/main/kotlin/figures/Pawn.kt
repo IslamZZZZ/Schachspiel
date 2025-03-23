@@ -17,6 +17,8 @@ class Pawn(override var position: Int, override val colour: Boolean, override va
     override fun canMove(newPosition: Int): Boolean {
         val sign = if(colour) 1 else -1
         val dif = newPosition - position
+        if(colour && (newPosition <= position)) return false
+        if(!colour && (newPosition >= position)) return false
 
         if(abs(dif) == 8) {
             if(board.isThereFigure(newPosition)) return false

@@ -5,7 +5,7 @@ import figures.*
 import kotlin.math.abs
 
 class Board {
-    val positions: MutableMap<Int, Figure> = mutableMapOf()
+    var positions: MutableMap<Int, Figure> = mutableMapOf()
     val whiteMoves: MutableList<Pair< Pair<Int, Int>, String > > = mutableListOf()
     val blackMoves: MutableList<Pair< Pair<Int, Int>, String > > = mutableListOf()
     var turn by mutableStateOf(true)
@@ -28,10 +28,23 @@ class Board {
     fun move(startPosition: Int, finalPosition: Int): Boolean {
         if(!isThereFigure(startPosition)) return false
 
-        /*val copiedPositions = positions.toMutableMap()
-        copiedPositions[startPosition]?.let { copiedPositions[finalPosition] = it }
-        copiedPositions.remove(startPosition)
-        if(schach(copiedPositions)) return false*/
+        positions[startPosition]?.let {
+            positions[finalPosition] = it
+            it.position = finalPosition
+        }
+
+        positions.remove(startPosition)
+        if(schach()) isChecked = true
+
+        positions[finalPosition]?.let{ it.position = startPosition }
+
+        positions = composePositions.value.toMutableMap()
+
+        if(isChecked) {
+            isChecked = false
+            return false
+        }
+
 
         if(turn == positions[startPosition]?.colour && (positions[startPosition]?.canMove(finalPosition) == true)) {
             positions[startPosition]?.let{
@@ -86,14 +99,15 @@ class Board {
             else -> "h"
         }
 
-        return "${letter}${ (square / 8) + 1}"
+        return "${letter}${ (square / 8) + 1 }"
     }
 
-    fun schach(copiedPositions: MutableMap<Int, Figure>): Boolean {
-        val king = copiedPositions.values.find { it is King && it.colour == this.turn}
+    fun schach(): Boolean {
+        
+        val king = positions.values.find { (it is King) && (it.colour == this.turn) }
 
         king?.let {
-            for(fig in positions.values) if(fig.colour != it.colour && fig.canMove(it.position)) return true
+            for(fig in positions.values) if( (fig.colour != it.colour) && (fig.canMove(it.position))) return true
         }
 
         return false

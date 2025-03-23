@@ -43,13 +43,7 @@ class Queen(override var position: Int, override val colour: Boolean, override v
     override fun canMove(newPosition: Int): Boolean {
         if( (newPosition - position) % 8 == 0 || ( (newPosition / 8) == (position / 8) ) ) {
             if (!isThereObstacle_ROOK(position, newPosition)) {
-                if (board.isThereFigure(newPosition) && board.positions[newPosition]?.colour == colour) return false
-
-                board.positions[newPosition] = this
-                board.positions.remove(position)
-                this.position = newPosition
-
-                return true
+                return !(board.isThereFigure(newPosition) && board.positions[newPosition]?.colour == colour)
             }
         }
 
