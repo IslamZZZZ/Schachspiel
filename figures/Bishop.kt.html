@@ -7,37 +7,39 @@ import kotlin.math.sign
 <span class="fc" id="L7">        board.positions[position] = this</span>
 <span class="fc" id="L8">    }</span>
 
+<span class="pc bpc" id="L10" title="1 of 2 branches missed.">    override val figure = if(colour) &quot;whiteBishop&quot; else &quot;blackBishop&quot;</span>
+
     /*override fun isThereFigure(location: Int): Boolean {
         return location in board.positions
     }*/
 
     private fun isThereObstacle(start: Int, end: Int): Boolean {
-<span class="fc" id="L15">        val dif = end - start</span>
-<span class="fc" id="L16">        val sign = dif.sign</span>
+<span class="fc" id="L17">        val dif = end - start</span>
+<span class="fc" id="L18">        val sign = dif.sign</span>
         //sign of this operation
 
-<span class="fc bfc" id="L19" title="All 4 branches covered.">        if( ( ( (sign == 1) &amp;&amp; (dif % 7 == 0) ) ||</span>
-<span class="fc bfc" id="L20" title="All 4 branches covered.">                    ( (sign == -1) &amp;&amp; (dif % 9 == 0) ) ) &amp;&amp;</span>
-<span class="fc bfc" id="L21" title="All 2 branches covered.">                        (end % 8 &gt;= start % 8)) return true</span>
-<span class="fc bfc" id="L22" title="All 4 branches covered.">        else if( ( ( (sign == -1) &amp;&amp; (dif % 7 == 0) ) ||</span>
-<span class="fc bfc" id="L23" title="All 4 branches covered.">                    ( (sign == 1) &amp;&amp; (dif % 9 == 0) ) ) &amp;&amp;</span>
-<span class="fc bfc" id="L24" title="All 2 branches covered.">                        (end % 8 &lt;= start % 8)) return true</span>
+<span class="fc bfc" id="L21" title="All 4 branches covered.">        if( ( ( (sign == 1) &amp;&amp; (dif % 7 == 0) ) ||</span>
+<span class="fc bfc" id="L22" title="All 4 branches covered.">                    ( (sign == -1) &amp;&amp; (dif % 9 == 0) ) ) &amp;&amp;</span>
+<span class="fc bfc" id="L23" title="All 2 branches covered.">                        (end % 8 &gt;= start % 8)) return true</span>
+<span class="fc bfc" id="L24" title="All 4 branches covered.">        else if( ( ( (sign == -1) &amp;&amp; (dif % 7 == 0) ) ||</span>
+<span class="fc bfc" id="L25" title="All 4 branches covered.">                    ( (sign == 1) &amp;&amp; (dif % 9 == 0) ) ) &amp;&amp;</span>
+<span class="fc bfc" id="L26" title="All 2 branches covered.">                        (end % 8 &lt;= start % 8)) return true</span>
 
-<span class="fc bfc" id="L26" title="All 2 branches covered.">        val jump = if(end - start % 9 == 0) 9 else 7</span>
+<span class="fc bfc" id="L28" title="All 2 branches covered.">        val jump = if( (end - start) % 9 == 0) 9 else 7</span>
         //we jump to the right(9/-7) or to the left(7/-9)
-<span class="fc" id="L28">        var i = 1</span>
-<span class="fc bfc" id="L29" title="All 4 branches covered.">        while(start + sign * i * jump != end) if(board.isThereFigure(start + sign * i++ * jump)) return true</span>
+<span class="fc" id="L30">        var i = 1</span>
+<span class="fc bfc" id="L31" title="All 4 branches covered.">        while(start + sign * i * jump != end) if(board.isThereFigure(start + sign * i++ * jump)) return true</span>
         //If we face obstacle, we can't canMove
-<span class="fc" id="L31">        return false</span>
+<span class="fc" id="L33">        return false</span>
     }
 
     override fun canMove(newPosition: Int): Boolean {
-<span class="fc bfc" id="L35" title="All 4 branches covered.">        if( ((newPosition - position) % 7 == 0) || ((newPosition - position) % 9 == 0) ) {</span>
-<span class="fc bfc" id="L36" title="All 2 branches covered.">            if (!isThereObstacle(position, newPosition)) {</span>
-<span class="pc bpc" id="L37" title="3 of 8 branches missed.">                return !(board.isThereFigure(newPosition) &amp;&amp; board.positions[newPosition]?.colour == colour)</span>
+<span class="fc bfc" id="L37" title="All 4 branches covered.">        if( ((newPosition - position) % 7 == 0) || ((newPosition - position) % 9 == 0) ) {</span>
+<span class="fc bfc" id="L38" title="All 2 branches covered.">            if (!isThereObstacle(position, newPosition)) {</span>
+<span class="pc bpc" id="L39" title="3 of 8 branches missed.">                return !(board.isThereFigure(newPosition) &amp;&amp; board.positions[newPosition]?.colour == colour)</span>
             }
         }
-<span class="fc" id="L40">        return false</span>
+<span class="fc" id="L42">        return false</span>
     }
 
 }

@@ -1,4 +1,5 @@
-<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>main.kt</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">app</a> &gt; <a href="index.source.html" class="el_package">default</a> &gt; <span class="el_source">main.kt</span></div><h1>main.kt</h1><pre class="source lang-java linenums">import androidx.compose.desktop.ui.tooling.preview.Preview
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>main.kt</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">app</a> &gt; <a href="index.source.html" class="el_package">default</a> &gt; <span class="el_source">main.kt</span></div><h1>main.kt</h1><pre class="source lang-java linenums">import Board.Board
+import androidx.compose.desktop.ui.tooling.preview.Preview
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.*
@@ -14,195 +15,672 @@ import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Window
 import androidx.compose.ui.window.application
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
+import figures.*
 
 
-<span class="nc" id="L23">data class Language(val code: String, val name: String)</span>
+<span class="nc" id="L30">data class Language(val code: String, val name: String)</span>
 
 enum class Screen {
-<span class="nc" id="L26">    START,</span>
-<span class="nc" id="L27">    GAME</span>
+<span class="nc" id="L33">    START,</span>
+<span class="nc" id="L34">    GAME</span>
 }
 
 
-<span class="nc" id="L31">val availableLanguages = listOf(</span>
-<span class="nc" id="L32">    Language(&quot;ru&quot;, &quot;Русский&quot;),</span>
-<span class="nc" id="L33">    Language(&quot;en&quot;, &quot;English&quot;),</span>
-<span class="nc" id="L34">    Language(&quot;de&quot;, &quot;Deutsch&quot;)</span>
+<span class="nc" id="L38">val availableLanguages = listOf(</span>
+<span class="nc" id="L39">    Language(&quot;ru&quot;, &quot;Русский&quot;),</span>
+<span class="nc" id="L40">    Language(&quot;en&quot;, &quot;English&quot;),</span>
+<span class="nc" id="L41">    Language(&quot;de&quot;, &quot;Deutsch&quot;)</span>
 )
 
+
+
 // Список доступных языков
-<span class="nc" id="L38">fun main() = application {</span>
-<span class="nc bnc" id="L39" title="All 6 branches missed.">    var currentScreen by remember { mutableStateOf(Screen.START) }</span>
+<span class="nc" id="L47">fun main() = application {</span>
+<span class="nc bnc" id="L48" title="All 6 branches missed.">    var currentScreen by remember { mutableStateOf(Screen.START) }</span>
+<span class="nc" id="L49">    val board = remember { Board() }</span>
+<span class="nc" id="L50">    board.setup()</span>
 
-<span class="nc bnc" id="L41" title="All 2 branches missed.">    Window(onCloseRequest = ::exitApplication, title = &quot;Das Schachspiel&quot;) {</span>
-<span class="nc bnc" id="L42" title="All 8 branches missed.">        MaterialTheme {</span>
-<span class="nc bnc" id="L43" title="All 9 branches missed.">                when(currentScreen) {</span>
-<span class="nc" id="L44">                    Screen.START -&gt; StartScreen( { currentScreen = Screen.GAME } )</span>
-<span class="nc" id="L45">                    Screen.GAME -&gt; GameScreen( { currentScreen = Screen.START } )</span>
-<span class="nc bnc" id="L46" title="All 2 branches missed.">                }</span>
-<span class="nc" id="L47">        }</span>
-<span class="nc" id="L48">    }</span>
-<span class="nc" id="L49">}</span>
-
-@Composable
-<span class="nc bnc" id="L52" title="All 18 branches missed.">fun standartButton(onButtonClick: () -&gt; Unit, text: String, colour: Color) {</span>
-<span class="nc bnc" id="L53" title="All 2 branches missed.">    Button(</span>
-<span class="nc" id="L54">        modifier = Modifier.height(80.dp),</span>
-<span class="nc" id="L55">        onClick = onButtonClick,</span>
-<span class="nc" id="L56">        colors = ButtonDefaults.buttonColors(backgroundColor = colour)</span>
-<span class="nc" id="L57">    ) {</span>
-<span class="nc bnc" id="L58" title="All 8 branches missed.">        Text(</span>
-<span class="nc" id="L59">            text,</span>
-<span class="nc" id="L60">            color = Color.White,</span>
-<span class="nc" id="L61">            fontSize = 26.sp,</span>
-<span class="nc" id="L62">            textAlign = TextAlign.Center,</span>
-<span class="nc" id="L63">            letterSpacing = 0.sp</span>
-<span class="nc" id="L64">        )</span>
-<span class="nc" id="L65">    }</span>
-<span class="nc bnc" id="L66" title="All 2 branches missed.">}</span>
-
+<span class="nc bnc" id="L52" title="All 2 branches missed.">    Window(onCloseRequest = ::exitApplication, title = &quot;Das Schachspiel&quot;) {</span>
+<span class="nc bnc" id="L53" title="All 8 branches missed.">        MaterialTheme {</span>
+<span class="nc bnc" id="L54" title="All 9 branches missed.">                when(currentScreen) {</span>
+<span class="nc" id="L55">                    Screen.START -&gt; StartScreen( { currentScreen = Screen.GAME } )</span>
+<span class="nc" id="L56">                    Screen.GAME -&gt; GameScreen( { currentScreen = Screen.START }, board )</span>
+<span class="nc bnc" id="L57" title="All 2 branches missed.">                }</span>
+<span class="nc" id="L58">        }</span>
+<span class="nc" id="L59">    }</span>
+<span class="nc" id="L60">}</span>
 
 @Composable
-<span class="nc bnc" id="L70" title="All 6 branches missed.">fun dropLangMenu() {</span>
+<span class="nc bnc" id="L63" title="All 18 branches missed.">fun standartButton(onButtonClick: () -&gt; Unit, text: String, colour: Color) {</span>
+<span class="nc bnc" id="L64" title="All 2 branches missed.">    Button(</span>
+<span class="nc" id="L65">        modifier = Modifier.height(80.dp),</span>
+<span class="nc" id="L66">        onClick = onButtonClick,</span>
+<span class="nc" id="L67">        colors = ButtonDefaults.buttonColors(backgroundColor = colour)</span>
+<span class="nc" id="L68">    ) {</span>
+<span class="nc bnc" id="L69" title="All 8 branches missed.">        Text(</span>
+<span class="nc" id="L70">            text,</span>
+<span class="nc" id="L71">            color = Color.White,</span>
+<span class="nc" id="L72">            fontSize = 26.sp,</span>
+<span class="nc" id="L73">            textAlign = TextAlign.Center,</span>
+<span class="nc" id="L74">            letterSpacing = 0.sp</span>
+<span class="nc" id="L75">        )</span>
+<span class="nc" id="L76">    }</span>
+<span class="nc bnc" id="L77" title="All 2 branches missed.">}</span>
+
+
+@Composable
+<span class="nc bnc" id="L81" title="All 6 branches missed.">fun dropLangMenu() {</span>
     // Текущий выбранный язык
-<span class="nc" id="L72">    var selectedLanguage by remember { mutableStateOf(availableLanguages[0]) }</span>
+<span class="nc" id="L83">    var selectedLanguage by remember { mutableStateOf(availableLanguages[0]) }</span>
 
     // Состояние для выпадающего меню
-<span class="nc" id="L75">    var dropdownExpanded by remember { mutableStateOf(false) }</span>
+<span class="nc" id="L86">    var dropdownExpanded by remember { mutableStateOf(false) }</span>
 
-<span class="nc" id="L77">    Button(</span>
-<span class="nc" id="L78">        onClick = { dropdownExpanded = true },</span>
-<span class="nc" id="L79">        colors = ButtonDefaults.buttonColors(backgroundColor = Color(0xFF5D4E96)),</span>
-<span class="nc" id="L80">        modifier = Modifier.size(width = 180.dp, height = 40.dp)</span>
-<span class="nc" id="L81">    ) {</span>
-<span class="nc bnc" id="L82" title="All 8 branches missed.">        Text(&quot;Язык: ${selectedLanguage.code.uppercase()}&quot;, color = Color.White)</span>
-<span class="nc" id="L83">    }</span>
+<span class="nc" id="L88">    Button(</span>
+<span class="nc" id="L89">        onClick = { dropdownExpanded = true },</span>
+<span class="nc" id="L90">        colors = ButtonDefaults.buttonColors(backgroundColor = Color(0xFF5D4E96)),</span>
+<span class="nc" id="L91">        modifier = Modifier.size(width = 180.dp, height = 40.dp)</span>
+<span class="nc" id="L92">    ) {</span>
+<span class="nc bnc" id="L93" title="All 8 branches missed.">        Text(&quot;Язык: ${selectedLanguage.code.uppercase()}&quot;, color = Color.White)</span>
+<span class="nc" id="L94">    }</span>
 
     // Выпадающее меню с языками
-<span class="nc bnc" id="L86" title="All 2 branches missed.">    DropdownMenu(</span>
-<span class="nc" id="L87">        expanded = dropdownExpanded,</span>
-<span class="nc" id="L88">        onDismissRequest = { dropdownExpanded = false },</span>
-<span class="nc" id="L89">        modifier = Modifier.width(180.dp).background(Color.White)</span>
-<span class="nc" id="L90">    ) {</span>
-<span class="nc bnc" id="L91" title="All 6 branches missed.">        availableLanguages.forEach { language -&gt;</span>
-<span class="nc" id="L92">            DropdownMenuItem(</span>
-<span class="nc" id="L93">                onClick = {</span>
-<span class="nc" id="L94">                    selectedLanguage = language</span>
-<span class="nc" id="L95">                    dropdownExpanded = false</span>
+<span class="nc bnc" id="L97" title="All 2 branches missed.">    DropdownMenu(</span>
+<span class="nc" id="L98">        expanded = dropdownExpanded,</span>
+<span class="nc" id="L99">        onDismissRequest = { dropdownExpanded = false },</span>
+<span class="nc" id="L100">        modifier = Modifier.width(180.dp).background(Color.White)</span>
+<span class="nc" id="L101">    ) {</span>
+<span class="nc bnc" id="L102" title="All 6 branches missed.">        availableLanguages.forEach { language -&gt;</span>
+<span class="nc" id="L103">            DropdownMenuItem(</span>
+<span class="nc" id="L104">                onClick = {</span>
+<span class="nc" id="L105">                    selectedLanguage = language</span>
+<span class="nc" id="L106">                    dropdownExpanded = false</span>
                     // Здесь можно добавить код для смены языка в приложении
-<span class="nc" id="L97">                    println(&quot;Выбран язык: ${language.name} (${language.code})&quot;)</span>
-<span class="nc" id="L98">                }</span>
-<span class="nc" id="L99">            ) {</span>
-<span class="nc bnc" id="L100" title="All 8 branches missed.">                Text(</span>
-<span class="nc" id="L101">                    &quot;${language.code.uppercase()} - ${language.name}&quot;,</span>
-<span class="nc bnc" id="L102" title="All 2 branches missed.">                    fontWeight = if (language == selectedLanguage) FontWeight.Bold else FontWeight.Normal</span>
-<span class="nc" id="L103">                )</span>
-<span class="nc" id="L104">            }</span>
-<span class="nc" id="L105">        }</span>
-<span class="nc" id="L106">    }</span>
-<span class="nc bnc" id="L107" title="All 2 branches missed.">}</span>
+<span class="nc" id="L108">                    println(&quot;Выбран язык: ${language.name} (${language.code})&quot;)</span>
+<span class="nc" id="L109">                }</span>
+<span class="nc" id="L110">            ) {</span>
+<span class="nc bnc" id="L111" title="All 8 branches missed.">                Text(</span>
+<span class="nc" id="L112">                    &quot;${language.code.uppercase()} - ${language.name}&quot;,</span>
+<span class="nc bnc" id="L113" title="All 2 branches missed.">                    fontWeight = if (language == selectedLanguage) FontWeight.Bold else FontWeight.Normal</span>
+<span class="nc" id="L114">                )</span>
+<span class="nc" id="L115">            }</span>
+<span class="nc" id="L116">        }</span>
+<span class="nc" id="L117">    }</span>
+<span class="nc bnc" id="L118" title="All 2 branches missed.">}</span>
 
 @Composable
-<span class="nc bnc" id="L110" title="All 10 branches missed.">fun StartScreen(onGameClick: () -&gt; Unit) {</span>
-<span class="nc" id="L111">    Box(modifier = Modifier.fillMaxSize().background(Color(0xFFffdfdf))) {</span>
+<span class="nc bnc" id="L121" title="All 10 branches missed.">fun StartScreen(onGameClick: () -&gt; Unit) {</span>
+<span class="nc" id="L122">    Box(modifier = Modifier.fillMaxSize().background(Color(0xFFffdfdf))) {</span>
 
-<span class="nc" id="L113">        Box(</span>
-<span class="nc" id="L114">            modifier = Modifier</span>
-<span class="nc" id="L115">                .background(Color(0xFF3d3d3d))</span>
-<span class="nc" id="L116">                .height(80.dp)</span>
-<span class="nc" id="L117">                .fillMaxWidth()</span>
+<span class="nc" id="L124">        Box(</span>
+<span class="nc" id="L125">            modifier = Modifier</span>
+<span class="nc" id="L126">                .background(Color(0xFF3d3d3d))</span>
+<span class="nc" id="L127">                .height(80.dp)</span>
+<span class="nc" id="L128">                .fillMaxWidth()</span>
         ) {
-<span class="nc" id="L119">            Box(modifier = Modifier.align(Alignment.Center)) {</span>
-<span class="nc" id="L120">                Text(</span>
-<span class="nc" id="L121">                    &quot;ШАХМАТЫ&quot;,</span>
-<span class="nc" id="L122">                    textAlign = TextAlign.Center,</span>
-<span class="nc" id="L123">                    fontSize = 30.sp,</span>
-<span class="nc" id="L124">                    fontWeight = FontWeight.Bold,</span>
-<span class="nc" id="L125">                    color = Color.White</span>
+<span class="nc" id="L130">            Box(modifier = Modifier.align(Alignment.Center)) {</span>
+<span class="nc" id="L131">                Text(</span>
+<span class="nc" id="L132">                    &quot;ШАХМАТЫ&quot;,</span>
+<span class="nc" id="L133">                    textAlign = TextAlign.Center,</span>
+<span class="nc" id="L134">                    fontSize = 30.sp,</span>
+<span class="nc" id="L135">                    fontWeight = FontWeight.Bold,</span>
+<span class="nc" id="L136">                    color = Color.White</span>
                 )
-<span class="nc" id="L127">            }</span>
-<span class="nc" id="L128">            Box(modifier = Modifier.align(Alignment.CenterEnd).padding(vertical = 20.dp)) { dropLangMenu() }</span>
-<span class="nc" id="L129">        }</span>
+<span class="nc" id="L138">            }</span>
+<span class="nc" id="L139">            Box(modifier = Modifier.align(Alignment.CenterEnd).padding(vertical = 20.dp)) { dropLangMenu() }</span>
+<span class="nc" id="L140">        }</span>
 
-<span class="nc" id="L131">        Box(modifier = Modifier.align(Alignment.CenterStart)) { bokovayaPanel(false) }</span>
+<span class="nc" id="L142">        Box(modifier = Modifier.align(Alignment.CenterStart)) { bokovayaPanel(false) }</span>
 
-<span class="nc" id="L133">        Box(modifier = Modifier.align(Alignment.CenterEnd)) { bokovayaPanel(true) }</span>
+<span class="nc" id="L144">        Box(modifier = Modifier.align(Alignment.CenterEnd)) { bokovayaPanel(true) }</span>
 
-<span class="nc" id="L135">        Column(</span>
-<span class="nc" id="L136">            modifier = Modifier.align(Alignment.Center),</span>
-<span class="nc" id="L137">            horizontalAlignment = Alignment.CenterHorizontally,</span>
-<span class="nc" id="L138">            verticalArrangement = Arrangement.Center</span>
+<span class="nc" id="L146">        Column(</span>
+<span class="nc" id="L147">            modifier = Modifier.align(Alignment.Center),</span>
+<span class="nc" id="L148">            horizontalAlignment = Alignment.CenterHorizontally,</span>
+<span class="nc" id="L149">            verticalArrangement = Arrangement.Center</span>
         ) {
-<span class="nc" id="L140">            standartButton(onGameClick, &quot;Начать игру&quot;, Color.Green)</span>
+<span class="nc" id="L151">            standartButton(onGameClick, &quot;Начать игру&quot;, Color.Green)</span>
 
-<span class="nc" id="L142">            Spacer(modifier = Modifier.padding(20.dp))</span>
+<span class="nc" id="L153">            Spacer(modifier = Modifier.padding(20.dp))</span>
 
-<span class="nc" id="L144">            standartButton({}, &quot;Загрузить игру&quot;, Color.Blue)</span>
-<span class="nc" id="L145">        }</span>
+<span class="nc" id="L155">            standartButton({}, &quot;Загрузить игру&quot;, Color.Blue)</span>
+<span class="nc" id="L156">        }</span>
 
-<span class="nc" id="L147">        Box(</span>
-<span class="nc" id="L148">            modifier = Modifier</span>
-<span class="nc" id="L149">                .fillMaxWidth()</span>
-<span class="nc" id="L150">                .height(50.dp)</span>
-<span class="nc" id="L151">                .align(Alignment.BottomStart)</span>
-<span class="nc" id="L152">                .background(Color(0xFF3d3d3d))</span>
+<span class="nc" id="L158">        Box(</span>
+<span class="nc" id="L159">            modifier = Modifier</span>
+<span class="nc" id="L160">                .fillMaxWidth()</span>
+<span class="nc" id="L161">                .height(50.dp)</span>
+<span class="nc" id="L162">                .align(Alignment.BottomStart)</span>
+<span class="nc" id="L163">                .background(Color(0xFF3d3d3d))</span>
         ) {
-<span class="nc" id="L154">            Button(</span>
-<span class="nc" id="L155">                onClick = {},</span>
-<span class="nc" id="L156">                colors = ButtonDefaults.buttonColors(backgroundColor = Color.Red),</span>
-<span class="nc" id="L157">                modifier = Modifier</span>
-<span class="nc" id="L158">                    .align(Alignment.CenterStart)</span>
-<span class="nc" id="L159">                    .padding(start = 15.dp)</span>
-<span class="nc" id="L160">            ) {</span>
-<span class="nc bnc" id="L161" title="All 8 branches missed.">                Text(&quot;Выход&quot;, fontSize = 18.sp)</span>
-<span class="nc" id="L162">            }</span>
+<span class="nc" id="L165">            Button(</span>
+<span class="nc" id="L166">                onClick = {},</span>
+<span class="nc" id="L167">                colors = ButtonDefaults.buttonColors(backgroundColor = Color.Red),</span>
+<span class="nc" id="L168">                modifier = Modifier</span>
+<span class="nc" id="L169">                    .align(Alignment.CenterStart)</span>
+<span class="nc" id="L170">                    .padding(start = 15.dp)</span>
+<span class="nc" id="L171">            ) {</span>
+<span class="nc bnc" id="L172" title="All 8 branches missed.">                Text(&quot;Выход&quot;, fontSize = 18.sp)</span>
+<span class="nc" id="L173">            }</span>
 
-<span class="nc" id="L164">            Text(</span>
-<span class="nc" id="L165">                &quot;Версия: Бета 1.0&quot;,</span>
-<span class="nc" id="L166">                modifier = Modifier.align(Alignment.Center),</span>
-<span class="nc" id="L167">                color = Color(0xFFc7c0c0).copy(alpha = 0.5f),</span>
-<span class="nc" id="L168">                fontSize = 20.sp</span>
+<span class="nc" id="L175">            Text(</span>
+<span class="nc" id="L176">                &quot;Версия: Бета 1.0&quot;,</span>
+<span class="nc" id="L177">                modifier = Modifier.align(Alignment.Center),</span>
+<span class="nc" id="L178">                color = Color(0xFFc7c0c0).copy(alpha = 0.5f),</span>
+<span class="nc" id="L179">                fontSize = 20.sp</span>
             )
-<span class="nc" id="L170">        }</span>
+<span class="nc" id="L181">        }</span>
 
 
-<span class="nc" id="L173">    }</span>
-<span class="nc bnc" id="L174" title="All 2 branches missed.">}</span>
+<span class="nc" id="L184">    }</span>
+<span class="nc bnc" id="L185" title="All 2 branches missed.">}</span>
 
 @Composable
-<span class="nc bnc" id="L177" title="All 10 branches missed.">fun bokovayaPanel(colour: Boolean) {</span>
-<span class="nc bnc" id="L178" title="All 2 branches missed.">    val figure = if(colour) &quot;white&quot; else &quot;black&quot;</span>
-<span class="nc bnc" id="L179" title="All 2 branches missed.">        Image(</span>
-<span class="nc" id="L180">            painter = painterResource(&quot;${figure}-pieces-panel.svg&quot;),</span>
-<span class="nc" id="L181">            contentDescription = &quot;${figure} figure&quot;,</span>
-<span class="nc" id="L182">            modifier = Modifier</span>
-<span class="nc" id="L183">                .padding(40.dp)</span>
-<span class="nc" id="L184">                .fillMaxHeight(0.7f)</span>
-<span class="nc" id="L185">                .fillMaxWidth(0.25f),</span>
-<span class="nc" id="L186">            contentScale = ContentScale.FillBounds</span>
+<span class="nc bnc" id="L188" title="All 10 branches missed.">fun bokovayaPanel(colour: Boolean) {</span>
+<span class="nc bnc" id="L189" title="All 2 branches missed.">    val figure = if(colour) &quot;white&quot; else &quot;black&quot;</span>
+<span class="nc bnc" id="L190" title="All 2 branches missed.">        Image(</span>
+<span class="nc" id="L191">            painter = painterResource(&quot;${figure}-pieces-panel.svg&quot;),</span>
+<span class="nc" id="L192">            contentDescription = &quot;${figure} figure&quot;,</span>
+<span class="nc" id="L193">            modifier = Modifier</span>
+<span class="nc" id="L194">                .padding(40.dp)</span>
+<span class="nc" id="L195">                .fillMaxHeight(0.7f)</span>
+<span class="nc" id="L196">                .fillMaxWidth(0.25f),</span>
+<span class="nc" id="L197">            contentScale = ContentScale.FillBounds</span>
         )
-<span class="nc bnc" id="L188" title="All 2 branches missed.">}</span>
+<span class="nc bnc" id="L199" title="All 2 branches missed.">}</span>
 
 @Composable
-<span class="nc bnc" id="L191" title="All 10 branches missed.">fun GameScreen(onStartClick: () -&gt; Unit) {</span>
+<span class="nc bnc" id="L202" title="All 2 branches missed.">fun GameScreen(onStartClick: () -&gt; Unit, board: Board) {</span>
+<span class="nc" id="L203">    Box(modifier = Modifier.fillMaxSize().background(Color(0xFFffdfdf))) {</span>
 
-<span class="nc" id="L193">    Box(</span>
-<span class="nc" id="L194">        modifier = Modifier.height(80.dp).background(Color.Cyan).fillMaxWidth()</span>
-    ) {
-<span class="nc" id="L196">        Box(modifier = Modifier.align(Alignment.TopStart)) {</span>
-<span class="nc" id="L197">            standartButton(onStartClick, &quot;Züruck&quot;, Color.Red)</span>
-<span class="nc" id="L198">        }</span>
+<span class="nc" id="L205">        Box(</span>
+<span class="nc" id="L206">            modifier = Modifier</span>
+<span class="nc" id="L207">                .background(Color(0xFF3d3d3d))</span>
+<span class="nc" id="L208">                .height(80.dp)</span>
+<span class="nc" id="L209">                .fillMaxWidth()</span>
+        ) {
+<span class="nc" id="L211">            Box(modifier = Modifier.align(Alignment.CenterStart)) {</span>
+<span class="nc" id="L212">                Text(</span>
+<span class="nc" id="L213">                    &quot;Шахматная Партия&quot;,</span>
+<span class="nc" id="L214">                    textAlign = TextAlign.Center,</span>
+<span class="nc" id="L215">                    fontSize = 30.sp,</span>
+<span class="nc" id="L216">                    fontWeight = FontWeight.Bold,</span>
+<span class="nc" id="L217">                    color = Color.White,</span>
+<span class="nc" id="L218">                    modifier = Modifier.padding(start = 20.dp)</span>
+                )
+<span class="nc" id="L220">            }</span>
+<span class="nc" id="L221">            Box(modifier = Modifier.align(Alignment.CenterEnd).padding(vertical = 20.dp)) { dropLangMenu() }</span>
 
-<span class="nc" id="L200">       Box(modifier = Modifier.align(Alignment.TopEnd)) {</span>
-<span class="nc" id="L201">            dropLangMenu()</span>
-<span class="nc" id="L202">       }</span>
-<span class="nc" id="L203">    }</span>
+<span class="nc" id="L223">        }</span>
 
-<span class="nc bnc" id="L205" title="All 2 branches missed.">}</span>
+<span class="nc" id="L225">        Column(</span>
+<span class="nc" id="L226">            modifier = Modifier</span>
+<span class="nc" id="L227">                .align(Alignment.CenterStart)</span>
+<span class="nc" id="L228">                .fillMaxSize(0.45f)</span>
+<span class="nc" id="L229">                .aspectRatio(1f)</span>
+<span class="nc" id="L230">                .padding(start = 120.dp, top = 50.dp)</span>
+<span class="nc" id="L231">                .border(width = 1.dp, color = Color.Blue)</span>
+        ) {
+<span class="nc" id="L233">            var selectedPosition by remember { mutableStateOf&lt;Int?&gt;(null) }</span>
+<span class="nc" id="L234">            var takenFigure by remember { mutableStateOf(false) }</span>
+
+<span class="nc bnc" id="L236" title="All 2 branches missed.">            for(rows in 1..8) {</span>
+
+<span class="nc" id="L238">                Row(</span>
+<span class="nc" id="L239">                    modifier = Modifier</span>
+<span class="nc" id="L240">                        .weight(0.125f)</span>
+<span class="nc" id="L241">                        .fillMaxWidth()</span>
+                ) {
+<span class="nc bnc" id="L243" title="All 2 branches missed.">                    for(sq in 0..7) {</span>
+<span class="nc" id="L244">                        val square = 64 - rows * 8 + sq</span>
+<span class="nc bnc" id="L245" title="All 2 branches missed.">                        val colour = if( ( (square / 8) + (square % 8) ) % 2 == 1) Color.Red else Color.Blue</span>
+<span class="nc" id="L246">                        Box(contentAlignment = Alignment.Center,</span>
+<span class="nc" id="L247">                            modifier = Modifier</span>
+<span class="nc bnc" id="L248" title="All 4 branches missed.">                                .background(if(selectedPosition == square) Color.Green else colour)</span>
+<span class="nc" id="L249">                                .weight(0.125f)</span>
+<span class="nc" id="L250">                                .fillMaxSize()</span>
+<span class="nc" id="L251">                                .clickable(onClick = {</span>
+<span class="nc bnc" id="L252" title="All 4 branches missed.">                                    if(selectedPosition == null &amp;&amp; board.isThereFigure(square)) {</span>
+<span class="nc" id="L253">                                        selectedPosition = square</span>
+                                    }
+<span class="nc bnc" id="L255" title="All 2 branches missed.">                                    else if(selectedPosition != null) {</span>
+<span class="nc bnc" id="L256" title="All 2 branches missed.">                                        selectedPosition?.let{</span>
+<span class="nc" id="L257">                                            board.move(it, square)</span>
+                                        }
+<span class="nc" id="L259">                                        selectedPosition = null</span>
+                                    }
+<span class="nc" id="L261">                                })</span>
+                        ) {
+<span class="nc bnc" id="L263" title="All 2 branches missed.">                            if(square in board.composePositions.value.keys) {</span>
+<span class="nc bnc" id="L264" title="All 2 branches missed.">                                board.composePositions.value[square]?.let {</span>
+<span class="nc" id="L265">                                    ChessImage(it.figure)</span>
+<span class="nc" id="L266">                                }</span>
+
+                            }
+<span class="nc" id="L269">                            Text(board.fromDigToNot(square))</span>
+<span class="nc" id="L270">                        }</span>
+                    }
+<span class="nc" id="L272">                }</span>
+            }
+
+<span class="nc" id="L275">        }</span>
+
+
+<span class="nc" id="L278">        Box(</span>
+<span class="nc" id="L279">            modifier = Modifier</span>
+<span class="nc" id="L280">                .fillMaxWidth(0.5f)</span>
+<span class="nc" id="L281">                .align(Alignment.CenterEnd)</span>
+        ) {
+<span class="nc" id="L283">            Column(</span>
+<span class="nc" id="L284">                modifier = Modifier</span>
+<span class="nc" id="L285">                    .fillMaxWidth(0.45f)</span>
+<span class="nc" id="L286">                    .align(Alignment.CenterStart)</span>
+            ) {
+<span class="nc" id="L288">                Column(</span>
+<span class="nc" id="L289">                    modifier = Modifier</span>
+<span class="nc" id="L290">                        .border(width = 3.dp, color = Color.Black, shape = RoundedCornerShape(8.dp))</span>
+<span class="nc" id="L291">                        .fillMaxWidth().padding(10.dp),</span>
+<span class="nc" id="L292">                    horizontalAlignment = Alignment.CenterHorizontally</span>
+                ) {
+<span class="nc" id="L294">                    Text(&quot;Player 1&quot;, fontWeight = FontWeight.Bold)</span>
+<span class="nc" id="L295">                    Spacer(modifier = Modifier.padding(10.dp))</span>
+<span class="nc" id="L296">                    Text(&quot;Rating: 1500&quot;)</span>
+<span class="nc" id="L297">                    Spacer(modifier = Modifier.padding(10.dp))</span>
+<span class="nc" id="L298">                    Column(</span>
+<span class="nc" id="L299">                        modifier = Modifier</span>
+<span class="nc" id="L300">                            .size(width = 120.dp, height = 40.dp)</span>
+<span class="nc" id="L301">                            .background(Color.Yellow)</span>
+                    ) {
+
+<span class="nc" id="L304">                    }</span>
+<span class="nc" id="L305">                }</span>
+
+
+
+<span class="nc" id="L309">                Spacer(modifier = Modifier.padding(10.dp))</span>
+
+
+<span class="nc" id="L312">                Column(</span>
+<span class="nc" id="L313">                    modifier = Modifier</span>
+<span class="nc" id="L314">                        .border(width = 3.dp, color = Color.Black, shape = RoundedCornerShape(8.dp))</span>
+<span class="nc" id="L315">                        .fillMaxWidth().padding(10.dp),</span>
+<span class="nc" id="L316">                    horizontalAlignment = Alignment.CenterHorizontally</span>
+                ) {
+<span class="nc" id="L318">                    Text(&quot;Player 2&quot;, fontWeight = FontWeight.Bold)</span>
+<span class="nc" id="L319">                    Spacer(modifier = Modifier.padding(10.dp))</span>
+<span class="nc" id="L320">                    Text(&quot;Rating: 1500&quot;)</span>
+<span class="nc" id="L321">                    Spacer(modifier = Modifier.padding(10.dp))</span>
+<span class="nc" id="L322">                    Column(</span>
+<span class="nc" id="L323">                        modifier = Modifier</span>
+<span class="nc" id="L324">                            .size(width = 120.dp, height = 40.dp)</span>
+<span class="nc" id="L325">                            .background(Color.Yellow)</span>
+                    ) {
+
+<span class="nc" id="L328">                    }</span>
+<span class="nc" id="L329">                }</span>
+
+<span class="nc" id="L331">                Spacer(modifier = Modifier.padding(5.dp))</span>
+
+<span class="nc" id="L333">                Button(</span>
+<span class="nc" id="L334">                    onClick = { board.reset() },</span>
+<span class="nc" id="L335">                    modifier = Modifier.fillMaxWidth(),</span>
+<span class="nc" id="L336">                    colors = ButtonDefaults.buttonColors(backgroundColor = Color.Green)</span>
+<span class="nc" id="L337">                ) {</span>
+<span class="nc bnc" id="L338" title="All 8 branches missed.">                    Text(&quot;Обновить игру&quot;, fontSize = 23.sp, color = Color.Black, fontWeight = FontWeight.Bold)</span>
+<span class="nc" id="L339">                }</span>
+
+<span class="nc" id="L341">                Spacer(modifier = Modifier.padding(5.dp))</span>
+
+<span class="nc" id="L343">                Button(</span>
+<span class="nc" id="L344">                    onClick = {  },</span>
+<span class="nc" id="L345">                    modifier = Modifier.fillMaxWidth(),</span>
+<span class="nc" id="L346">                    colors = ButtonDefaults.buttonColors(backgroundColor = Color.Yellow)</span>
+<span class="nc" id="L347">                ) {</span>
+<span class="nc bnc" id="L348" title="All 8 branches missed.">                    Text(&quot;Сдаться&quot;, fontSize = 23.sp, color = Color.Black, fontWeight = FontWeight.Bold)</span>
+<span class="nc" id="L349">                }</span>
+
+<span class="nc" id="L351">                Spacer(modifier = Modifier.padding(5.dp))</span>
+
+<span class="nc" id="L353">                Button(</span>
+<span class="nc" id="L354">                    onClick = {  },</span>
+<span class="nc" id="L355">                    modifier = Modifier.fillMaxWidth(),</span>
+<span class="nc" id="L356">                    colors = ButtonDefaults.buttonColors(backgroundColor = Color.Blue)</span>
+<span class="nc" id="L357">                ) {</span>
+<span class="nc bnc" id="L358" title="All 8 branches missed.">                    Text(&quot;Предложить ничью&quot;, fontSize = 23.sp, color = Color.Black, fontWeight = FontWeight.Bold)</span>
+<span class="nc" id="L359">                }</span>
+
+<span class="nc" id="L361">                Spacer(modifier = Modifier.padding(5.dp))</span>
+
+<span class="nc" id="L363">                Button(</span>
+<span class="nc" id="L364">                    onClick = {  },</span>
+<span class="nc" id="L365">                    modifier = Modifier.fillMaxWidth(),</span>
+<span class="nc" id="L366">                    colors = ButtonDefaults.buttonColors(backgroundColor = Color.Blue)</span>
+<span class="nc" id="L367">                ) {</span>
+<span class="nc bnc" id="L368" title="All 8 branches missed.">                    Text(&quot;Сохранить игру&quot;, fontSize = 23.sp, color = Color.Black, fontWeight = FontWeight.Bold)</span>
+<span class="nc" id="L369">                }</span>
+
+<span class="nc" id="L371">                Spacer(modifier = Modifier.padding(5.dp))</span>
+
+<span class="nc" id="L373">                Text(&quot;Turn: ${board.turn}&quot;, fontSize = 20.sp, modifier = Modifier</span>
+<span class="nc" id="L374">                    .border(width = 3.dp, color = Color.Black)</span>
+<span class="nc" id="L375">                    .fillMaxWidth()</span>
+<span class="nc" id="L376">                    .height(40.dp)</span>
+<span class="nc" id="L377">                    .background(Color.Cyan)</span>
+<span class="nc" id="L378">                    .wrapContentHeight(align = Alignment.CenterVertically)</span>
+<span class="nc" id="L379">                    .wrapContentWidth(align = Alignment.CenterHorizontally),</span>
+<span class="nc" id="L380">                    fontWeight = FontWeight.Bold</span>
+                )
+
+<span class="nc" id="L383">                Spacer(modifier = Modifier.padding(20.dp))</span>
+
+<span class="nc" id="L385">                Button (</span>
+<span class="nc" id="L386">                    onClick = onStartClick,</span>
+<span class="nc" id="L387">                    modifier = Modifier.fillMaxWidth().height(60.dp),</span>
+<span class="nc" id="L388">                    colors = ButtonDefaults.buttonColors(backgroundColor = Color.Transparent)</span>
+<span class="nc" id="L389">                ) {</span>
+<span class="nc bnc" id="L390" title="All 8 branches missed.">                    Text(&quot;Назад&quot;, fontSize = 23.sp, color = Color.Black, fontWeight = FontWeight.Bold)</span>
+<span class="nc" id="L391">                }</span>
+<span class="nc" id="L392">            }</span>
+
+<span class="nc" id="L394">            Column(</span>
+<span class="nc" id="L395">                modifier = Modifier</span>
+<span class="nc" id="L396">                    .align(Alignment.CenterEnd)</span>
+<span class="nc" id="L397">                    .fillMaxWidth(0.45f)</span>
+            ) {
+<span class="nc" id="L399">                Card(</span>
+<span class="nc" id="L400">                    elevation = 4.dp,</span>
+<span class="nc" id="L401">                    modifier = Modifier</span>
+<span class="nc" id="L402">                        .fillMaxWidth()</span>
+<span class="nc" id="L403">                        .padding(10.dp)</span>
+<span class="nc" id="L404">                ) {</span>
+<span class="nc bnc" id="L405" title="All 6 branches missed.">                    Column {</span>
+<span class="nc" id="L406">                        Row(modifier = Modifier.height(40.dp).background(Color(0xFFd5d5d5)),</span>
+<span class="nc" id="L407">                            verticalAlignment = Alignment.CenterVertically) {</span>
+<span class="nc" id="L408">                            Text(&quot;Запись ходов&quot;,</span>
+<span class="nc" id="L409">                                fontSize = 23.sp,</span>
+<span class="nc" id="L410">                                fontWeight = FontWeight.Bold,</span>
+<span class="nc" id="L411">                                modifier = Modifier.fillMaxWidth(),</span>
+<span class="nc" id="L412">                                textAlign = TextAlign.Center</span>
+                            )
+<span class="nc" id="L414">                        }</span>
+
+<span class="nc" id="L416">                        val listState = rememberLazyListState()</span>
+<span class="nc" id="L417">                        LaunchedEffect(board.whiteMoves.size) {</span>
+<span class="nc bnc" id="L418" title="All 2 branches missed.">                            if(board.whiteMoves.size &gt; 0) {</span>
+<span class="nc" id="L419">                                listState.animateScrollToItem(board.whiteMoves.size - 1)</span>
+                            }
+<span class="nc" id="L421">                        }</span>
+
+<span class="nc" id="L423">                        LazyColumn(</span>
+<span class="nc" id="L424">                            modifier = Modifier</span>
+<span class="nc" id="L425">                                .heightIn(max = 320.dp)</span>
+<span class="nc" id="L426">                                .fillMaxWidth(),</span>
+<span class="nc" id="L427">                            state = listState</span>
+                        ) {
+<span class="nc" id="L429">                            items(count = board.whiteMoves.size) { item -&gt;</span>
+<span class="nc bnc" id="L430" title="All 6 branches missed.">                                Row(</span>
+<span class="nc" id="L431">                                    modifier = Modifier</span>
+<span class="nc" id="L432">                                        .fillMaxWidth()</span>
+<span class="nc" id="L433">                                        .height(30.dp)</span>
+<span class="nc" id="L434">                                        .border(0.15.dp, color = Color.Black)</span>
+<span class="nc" id="L435">                                        .background(Color(0xFFfff6f6))</span>
+                                ) {
+<span class="nc" id="L437">                                    Text(</span>
+<span class="nc" id="L438">                                        &quot;${item + 1}.&quot;,</span>
+<span class="nc" id="L439">                                        modifier = Modifier</span>
+<span class="nc" id="L440">                                            .fillMaxHeight()</span>
+<span class="nc" id="L441">                                            .weight(0.2f)</span>
+<span class="nc" id="L442">                                            .border(0.15.dp, color = Color.Black),</span>
+<span class="nc" id="L443">                                        textAlign = TextAlign.Center</span>
+                                    )
+
+<span class="nc" id="L446">                                    Text(</span>
+<span class="nc" id="L447">                                        &quot;${board.whiteMoves[item].second}: &quot; +</span>
+<span class="nc" id="L448">                                                board.fromDigToNot(board.whiteMoves[item].first.first) +</span>
+                                                &quot; - &quot; +
+<span class="nc" id="L450">                                                board.fromDigToNot(board.whiteMoves[item].first.second),</span>
+<span class="nc" id="L451">                                        modifier = Modifier</span>
+<span class="nc" id="L452">                                            .fillMaxHeight()</span>
+<span class="nc" id="L453">                                            .weight(0.4f),</span>
+<span class="nc" id="L454">                                        textAlign = TextAlign.Center</span>
+                                    )
+
+<span class="nc" id="L457">                                    Text(</span>
+<span class="nc bnc" id="L458" title="All 2 branches missed.">                                        if(board.blackMoves.size &gt; item)</span>
+<span class="nc" id="L459">                                            &quot;${board.blackMoves[item].second}: &quot; +</span>
+<span class="nc" id="L460">                                                    board.fromDigToNot(board.blackMoves[item].first.first) +</span>
+                                                    &quot; - &quot; +
+<span class="nc" id="L462">                                                    board.fromDigToNot(board.blackMoves[item].first.second) else &quot;&quot;,</span>
+<span class="nc" id="L463">                                        modifier = Modifier</span>
+<span class="nc" id="L464">                                            .fillMaxHeight()</span>
+<span class="nc" id="L465">                                            .weight(0.4f),</span>
+<span class="nc" id="L466">                                        textAlign = TextAlign.Center</span>
+                                    )
+<span class="nc" id="L468">                                }</span>
+<span class="nc" id="L469">                            }</span>
+<span class="nc" id="L470">                        }</span>
+<span class="nc" id="L471">                    }</span>
+
+
+<span class="nc" id="L474">                }</span>
+<span class="nc" id="L475">            }</span>
+<span class="nc" id="L476">        }</span>
+<span class="nc" id="L477">            }</span>
+
+            /*Column(
+                modifier = Modifier
+                    .border(width = 3.dp, color = Color.Black, shape = RoundedCornerShape(8.dp))
+                    .fillMaxWidth().padding(10.dp),
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                Text(&quot;Player 1&quot;, fontWeight = FontWeight.Bold)
+                Spacer(modifier = Modifier.padding(10.dp))
+                Text(&quot;Rating: 1500&quot;)
+                Spacer(modifier = Modifier.padding(10.dp))
+                Column(
+                    modifier = Modifier
+                        .size(width = 120.dp, height = 40.dp)
+                        .background(Color.Yellow)
+                ) {
+
+                }
+            }
+
+            Spacer(modifier = Modifier.padding(10.dp))
+
+            Card(
+                elevation = 4.dp,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(10.dp)
+            ) {
+                Column {
+                    Row(modifier = Modifier.height(40.dp).background(Color(0xFFd5d5d5)),
+                        verticalAlignment = Alignment.CenterVertically) {
+                        Text(&quot;Запись ходов&quot;,
+                            fontSize = 23.sp,
+                            fontWeight = FontWeight.Bold,
+                            modifier = Modifier.fillMaxWidth(),
+                            textAlign = TextAlign.Center
+                        )
+                    }
+
+                    val listState = rememberLazyListState()
+                    LaunchedEffect(board.whiteMoves.size) {
+                        if(board.whiteMoves.size &gt; 0) {
+                            listState.animateScrollToItem(board.whiteMoves.size - 1)
+                        }
+                    }
+
+                    LazyColumn(
+                        modifier = Modifier
+                            .heightIn(max = 320.dp)
+                            .fillMaxWidth(),
+                        state = listState
+                    ) {
+                        items(count = board.whiteMoves.size) { item -&gt;
+                            Row(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .height(30.dp)
+                                    .border(0.15.dp, color = Color.Black)
+                                    .background(Color(0xFFfff6f6))
+                            ) {
+                                Text(
+                                    &quot;${item + 1}.&quot;,
+                                    modifier = Modifier
+                                        .fillMaxHeight()
+                                        .weight(0.2f)
+                                        .border(0.15.dp, color = Color.Black),
+                                        textAlign = TextAlign.Center
+                                )
+
+                                Text(
+                                    &quot;${board.whiteMoves[item].second}: &quot; +
+                                            board.fromDigToNot(board.whiteMoves[item].first.first) +
+                                            &quot; - &quot; +
+                                            board.fromDigToNot(board.whiteMoves[item].first.second),
+                                    modifier = Modifier
+                                        .fillMaxHeight()
+                                        .weight(0.4f),
+                                    textAlign = TextAlign.Center
+                                )
+
+                                Text(
+                                    if(board.blackMoves.size &gt; item)
+                                        &quot;${board.blackMoves[item].second}: &quot; +
+                                            board.fromDigToNot(board.blackMoves[item].first.first) +
+                                            &quot; - &quot; +
+                                            board.fromDigToNot(board.blackMoves[item].first.second) else &quot;&quot;,
+                                    modifier = Modifier
+                                        .fillMaxHeight()
+                                        .weight(0.4f),
+                                    textAlign = TextAlign.Center
+                                )
+                            }
+                        }
+                    }
+                }
+
+
+            }
+
+            Spacer(modifier = Modifier.padding(10.dp))
+
+
+            Column(
+                modifier = Modifier
+                    .border(width = 3.dp, color = Color.Black, shape = RoundedCornerShape(8.dp))
+                    .fillMaxWidth().padding(10.dp),
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                Text(&quot;Player 2&quot;, fontWeight = FontWeight.Bold)
+                Spacer(modifier = Modifier.padding(10.dp))
+                Text(&quot;Rating: 1500&quot;)
+                Spacer(modifier = Modifier.padding(10.dp))
+                Column(
+                    modifier = Modifier
+                        .size(width = 120.dp, height = 40.dp)
+                        .background(Color.Yellow)
+                ) {
+
+                }
+            }
+
+            Spacer(modifier = Modifier.padding(5.dp))
+
+            Button(
+                onClick = { board.reset() },
+                modifier = Modifier.fillMaxWidth(),
+                colors = ButtonDefaults.buttonColors(backgroundColor = Color.Green)
+            ) {
+                Text(&quot;Обновить игру&quot;, fontSize = 23.sp, color = Color.Black, fontWeight = FontWeight.Bold)
+            }
+
+            Spacer(modifier = Modifier.padding(5.dp))
+
+            Button(
+                onClick = {  },
+                modifier = Modifier.fillMaxWidth(),
+                colors = ButtonDefaults.buttonColors(backgroundColor = Color.Yellow)
+            ) {
+                Text(&quot;Сдаться&quot;, fontSize = 23.sp, color = Color.Black, fontWeight = FontWeight.Bold)
+            }
+
+            Spacer(modifier = Modifier.padding(5.dp))
+
+            Button(
+                onClick = {  },
+                modifier = Modifier.fillMaxWidth(),
+                colors = ButtonDefaults.buttonColors(backgroundColor = Color.Blue)
+            ) {
+                Text(&quot;Предложить ничью&quot;, fontSize = 23.sp, color = Color.Black, fontWeight = FontWeight.Bold)
+            }
+
+            Spacer(modifier = Modifier.padding(5.dp))
+
+            Button(
+                onClick = {  },
+                modifier = Modifier.fillMaxWidth(),
+                colors = ButtonDefaults.buttonColors(backgroundColor = Color.Blue)
+            ) {
+                Text(&quot;Сохранить игру&quot;, fontSize = 23.sp, color = Color.Black, fontWeight = FontWeight.Bold)
+            }
+
+            Spacer(modifier = Modifier.padding(5.dp))
+
+            Text(&quot;Turn: ${board.turn}&quot;, fontSize = 20.sp, modifier = Modifier
+                .border(width = 3.dp, color = Color.Black)
+                .fillMaxWidth()
+                .height(40.dp)
+                .background(Color.Cyan)
+                .wrapContentHeight(align = Alignment.CenterVertically)
+                .wrapContentWidth(align = Alignment.CenterHorizontally),
+                fontWeight = FontWeight.Bold
+            )
+
+            Spacer(modifier = Modifier.padding(20.dp))
+
+            Button (
+                onClick = onStartClick,
+                modifier = Modifier.fillMaxWidth().height(60.dp),
+                colors = ButtonDefaults.buttonColors(backgroundColor = Color.Transparent)
+            ) {
+                Text(&quot;Назад&quot;, fontSize = 23.sp, color = Color.Black, fontWeight = FontWeight.Bold)
+            }
+        }
+    }*/
+<span class="nc" id="L662">}</span>
+
+
+@Composable
+<span class="nc bnc" id="L666" title="All 10 branches missed.">fun ChessImage(figure: String) {</span>
+<span class="nc bnc" id="L667" title="All 13 branches missed.">    when(figure) {</span>
+<span class="nc" id="L668">        &quot;whitePawn&quot; -&gt; Image(painter = painterResource(&quot;white-pawn.svg&quot;), contentDescription = &quot;White Pawn&quot;)</span>
+<span class="nc" id="L669">        &quot;blackPawn&quot; -&gt; Image(painter = painterResource(&quot;black-pawn.svg&quot;), contentDescription = &quot;Black Pawn&quot;)</span>
+<span class="nc" id="L670">        &quot;whiteRook&quot; -&gt; Image(painter = painterResource(&quot;white-rook.svg&quot;), contentDescription = &quot;White Rook&quot;)</span>
+<span class="nc" id="L671">        &quot;blackRook&quot; -&gt; Image(painter = painterResource(&quot;black-rook.svg&quot;), contentDescription = &quot;Black Rook&quot;)</span>
+<span class="nc" id="L672">        &quot;whiteKnight&quot; -&gt; Image(painter = painterResource(&quot;white-knight.svg&quot;), contentDescription = &quot;White Knight&quot;)</span>
+<span class="nc" id="L673">        &quot;blackKnight&quot; -&gt; Image(painter = painterResource(&quot;black-knight.svg&quot;), contentDescription = &quot;Black Knight&quot;)</span>
+<span class="nc" id="L674">        &quot;whiteBishop&quot; -&gt; Image(painter = painterResource(&quot;white-bishop.svg&quot;), contentDescription = &quot;White Bishop&quot;)</span>
+<span class="nc" id="L675">        &quot;blackBishop&quot; -&gt; Image(painter = painterResource(&quot;black-bishop.svg&quot;), contentDescription = &quot;Black Bishop&quot;)</span>
+<span class="nc" id="L676">        &quot;whiteKing&quot; -&gt; Image(painter = painterResource(&quot;white-king.svg&quot;), contentDescription = &quot;White King&quot;)</span>
+<span class="nc" id="L677">        &quot;blackKing&quot; -&gt; Image(painter = painterResource(&quot;black-king.svg&quot;), contentDescription = &quot;Black King&quot;)</span>
+<span class="nc" id="L678">        &quot;whiteQueen&quot; -&gt; Image(painter = painterResource(&quot;white-queen.svg&quot;), contentDescription = &quot;White Queen&quot;)</span>
+<span class="nc" id="L679">        &quot;blackQueen&quot; -&gt; Image(painter = painterResource(&quot;black-queen.svg&quot;), contentDescription = &quot;Black Queen&quot;)</span>
+<span class="nc bnc" id="L680" title="All 2 branches missed.">        else -&gt; Image(painter = painterResource(&quot;white-pawn.svg&quot;), contentDescription = &quot;White Pawn&quot;)</span>
+    }
+<span class="nc bnc" id="L682" title="All 2 branches missed.">}</span>
+
 
 /*data class Language(val code: String, val name: String)
 

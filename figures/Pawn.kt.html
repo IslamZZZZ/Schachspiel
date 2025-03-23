@@ -8,43 +8,47 @@ import kotlin.math.abs
 <span class="fc" id="L8">        board.positions[position] = this</span>
 <span class="fc" id="L9">    }</span>
 
+<span class="pc bfc" id="L11" title="All 2 branches covered.">    override val figure = if(colour) &quot;whitePawn&quot; else &quot;blackPawn&quot;</span>
+
     /*override fun isThereFigure(location: Int): Boolean {
         TODO()
     }*/
 
     override fun canMove(newPosition: Int): Boolean {
-<span class="fc bfc" id="L16" title="All 2 branches covered.">        val sign = if(colour) 1 else -1</span>
-<span class="fc" id="L17">        val dif = newPosition - position</span>
+<span class="fc bfc" id="L18" title="All 2 branches covered.">        val sign = if(colour) 1 else -1</span>
+<span class="fc" id="L19">        val dif = newPosition - position</span>
 
-<span class="fc bfc" id="L19" title="All 2 branches covered.">        if(abs(dif) == 8) {</span>
-<span class="fc bfc" id="L20" title="All 2 branches covered.">            if(board.isThereFigure(newPosition)) return false</span>
+<span class="fc bfc" id="L21" title="All 2 branches covered.">        if(abs(dif) == 8) {</span>
+<span class="fc bfc" id="L22" title="All 2 branches covered.">            if(board.isThereFigure(newPosition)) return false</span>
             //Is there a figure - we can't canMove
         }
-<span class="fc bfc" id="L23" title="All 2 branches covered.">        else if(abs(dif) == 16) {</span>
+<span class="fc bfc" id="L25" title="All 2 branches covered.">        else if(abs(dif) == 16) {</span>
             //if(position / 8 != 1 || board.isThereFigure(newPosition) || board.isThereFigure(newPosition - 8)) return false
-<span class="pc bpc" id="L25" title="1 of 8 branches missed.">            if( (colour &amp;&amp; position / 8 != 1) || (!colour &amp;&amp; position / 8 != 6)) return false</span>
-<span class="fc bfc" id="L26" title="All 4 branches covered.">            if(board.isThereFigure(newPosition) || board.isThereFigure(newPosition - 8 * sign)) return false</span>
+<span class="pc bpc" id="L27" title="1 of 8 branches missed.">            if( (colour &amp;&amp; position / 8 != 1) || (!colour &amp;&amp; position / 8 != 6)) return false</span>
+<span class="fc bfc" id="L28" title="All 4 branches covered.">            if(board.isThereFigure(newPosition) || board.isThereFigure(newPosition - 8 * sign)) return false</span>
             //We've not moved or there's obstacle right before our canMove - we can't canMove
         }
-<span class="fc bfc" id="L29" title="All 8 branches covered.">        else if( (abs(dif) == 8 - sign &amp;&amp; position % 8 != 0) || (abs(dif) == 8 + sign &amp;&amp; position % 8 != 7) ) {</span>
-<span class="pc bpc" id="L30" title="1 of 6 branches missed.">            if(board.positions[newPosition]?.colour != board.turn) return true</span>
-<span class="pc bpc" id="L31" title="1 of 2 branches missed.">            if(!board.isThereFigure(newPosition)) {</span>
-<span class="nc bnc" id="L32" title="All 4 branches missed.">                if(board.turn &amp;&amp; (position / 8 == 4)) {</span>
-<span class="nc bnc" id="L33" title="All 2 branches missed.">                    if(board.blackMoves.last().first.first == newPosition + 8 &amp;&amp;</span>
-<span class="nc bnc" id="L34" title="All 2 branches missed.">                        board.blackMoves.last().second == &quot;Pawn&quot;) board.enpassant = true</span>
+<span class="fc bfc" id="L31" title="All 8 branches covered.">        else if( (abs(dif) == 8 - sign &amp;&amp; position % 8 != 0) || (abs(dif) == 8 + sign &amp;&amp; position % 8 != 7) ) {</span>
+<span class="pc bpc" id="L32" title="2 of 8 branches missed.">            if(board.positions[newPosition]?.colour == !board.turn) return true</span>
+<span class="pc bpc" id="L33" title="1 of 2 branches missed.">            if(!board.isThereFigure(newPosition)) {</span>
+<span class="nc bnc" id="L34" title="All 4 branches missed.">                if(board.turn &amp;&amp; (position / 8 == 4)) {</span>
+<span class="nc bnc" id="L35" title="All 2 branches missed.">                    if(board.blackMoves.last().first.first == newPosition + 8 &amp;&amp;</span>
+<span class="nc bnc" id="L36" title="All 2 branches missed.">                        board.blackMoves.last().second == &quot;Pawn&quot;) board.enpassant = true</span>
+<span class="nc" id="L37">                    else return false</span>
                 }
-<span class="nc bnc" id="L36" title="All 4 branches missed.">                else if(!board.turn &amp;&amp; (position / 8 == 3)) {</span>
-<span class="nc bnc" id="L37" title="All 2 branches missed.">                    if(board.whiteMoves.last().first.first == newPosition - 8 &amp;&amp;</span>
-<span class="nc bnc" id="L38" title="All 2 branches missed.">                        board.whiteMoves.last().second == &quot;Pawn&quot;) board.enpassant = true</span>
+<span class="nc bnc" id="L39" title="All 4 branches missed.">                else if(!board.turn &amp;&amp; (position / 8 == 3)) {</span>
+<span class="nc bnc" id="L40" title="All 2 branches missed.">                    if(board.whiteMoves.last().first.first == newPosition - 8 &amp;&amp;</span>
+<span class="nc bnc" id="L41" title="All 2 branches missed.">                        board.whiteMoves.last().second == &quot;Pawn&quot;) board.enpassant = true</span>
+<span class="nc" id="L42">                    else return false</span>
                 }
-<span class="nc" id="L40">                else return false</span>
+<span class="nc" id="L44">                else return false</span>
             }
-<span class="pc bpc" id="L42" title="3 of 6 branches missed.">            if(board.positions[newPosition]?.colour == this.colour) return false</span>
+<span class="pc bpc" id="L46" title="3 of 6 branches missed.">            if(board.positions[newPosition]?.colour == this.colour) return false</span>
         }
-<span class="fc" id="L44">        else return false</span>
+<span class="fc" id="L48">        else return false</span>
 
 
-<span class="fc" id="L47">        return true</span>
+<span class="fc" id="L51">        return true</span>
     }
 
 
