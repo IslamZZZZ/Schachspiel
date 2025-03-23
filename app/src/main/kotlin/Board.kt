@@ -74,6 +74,21 @@ class Board {
         return false
     }
 
+    fun fromDigToNot(square: Int): String {
+        val letter = when(square % 8) {
+            0 -> "a"
+            1 -> "b"
+            2 -> "c"
+            3 -> "d"
+            4 -> "e"
+            5 -> "f"
+            6 -> "g"
+            else -> "h"
+        }
+
+        return "${letter}${ (square / 8) + 1}"
+    }
+
     fun schach(copiedPositions: MutableMap<Int, Figure>): Boolean {
         val king = copiedPositions.values.find { it is King && it.colour == this.turn}
 

@@ -19,6 +19,7 @@ import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.layout.ContentScale
@@ -265,7 +266,7 @@ fun GameScreen(onStartClick: () -> Unit, board: Board) {
                                 }
 
                             }
-                            //Text("$square")
+                            Text(board.fromDigToNot(square))
                         }
                     }
                 }
@@ -274,12 +275,208 @@ fun GameScreen(onStartClick: () -> Unit, board: Board) {
         }
 
 
-        Column(
+        Box(
             modifier = Modifier
-                .fillMaxWidth(0.25f)
+                .fillMaxWidth(0.5f)
                 .align(Alignment.CenterEnd)
         ) {
             Column(
+                modifier = Modifier
+                    .fillMaxWidth(0.45f)
+                    .align(Alignment.CenterStart)
+            ) {
+                Column(
+                    modifier = Modifier
+                        .border(width = 3.dp, color = Color.Black, shape = RoundedCornerShape(8.dp))
+                        .fillMaxWidth().padding(10.dp),
+                    horizontalAlignment = Alignment.CenterHorizontally
+                ) {
+                    Text("Player 1", fontWeight = FontWeight.Bold)
+                    Spacer(modifier = Modifier.padding(10.dp))
+                    Text("Rating: 1500")
+                    Spacer(modifier = Modifier.padding(10.dp))
+                    Column(
+                        modifier = Modifier
+                            .size(width = 120.dp, height = 40.dp)
+                            .background(Color.Yellow)
+                    ) {
+
+                    }
+                }
+
+
+
+                Spacer(modifier = Modifier.padding(10.dp))
+
+
+                Column(
+                    modifier = Modifier
+                        .border(width = 3.dp, color = Color.Black, shape = RoundedCornerShape(8.dp))
+                        .fillMaxWidth().padding(10.dp),
+                    horizontalAlignment = Alignment.CenterHorizontally
+                ) {
+                    Text("Player 2", fontWeight = FontWeight.Bold)
+                    Spacer(modifier = Modifier.padding(10.dp))
+                    Text("Rating: 1500")
+                    Spacer(modifier = Modifier.padding(10.dp))
+                    Column(
+                        modifier = Modifier
+                            .size(width = 120.dp, height = 40.dp)
+                            .background(Color.Yellow)
+                    ) {
+
+                    }
+                }
+
+                Spacer(modifier = Modifier.padding(5.dp))
+
+                Button(
+                    onClick = { board.reset() },
+                    modifier = Modifier.fillMaxWidth(),
+                    colors = ButtonDefaults.buttonColors(backgroundColor = Color.Green)
+                ) {
+                    Text("Обновить игру", fontSize = 23.sp, color = Color.Black, fontWeight = FontWeight.Bold)
+                }
+
+                Spacer(modifier = Modifier.padding(5.dp))
+
+                Button(
+                    onClick = {  },
+                    modifier = Modifier.fillMaxWidth(),
+                    colors = ButtonDefaults.buttonColors(backgroundColor = Color.Yellow)
+                ) {
+                    Text("Сдаться", fontSize = 23.sp, color = Color.Black, fontWeight = FontWeight.Bold)
+                }
+
+                Spacer(modifier = Modifier.padding(5.dp))
+
+                Button(
+                    onClick = {  },
+                    modifier = Modifier.fillMaxWidth(),
+                    colors = ButtonDefaults.buttonColors(backgroundColor = Color.Blue)
+                ) {
+                    Text("Предложить ничью", fontSize = 23.sp, color = Color.Black, fontWeight = FontWeight.Bold)
+                }
+
+                Spacer(modifier = Modifier.padding(5.dp))
+
+                Button(
+                    onClick = {  },
+                    modifier = Modifier.fillMaxWidth(),
+                    colors = ButtonDefaults.buttonColors(backgroundColor = Color.Blue)
+                ) {
+                    Text("Сохранить игру", fontSize = 23.sp, color = Color.Black, fontWeight = FontWeight.Bold)
+                }
+
+                Spacer(modifier = Modifier.padding(5.dp))
+
+                Text("Turn: ${board.turn}", fontSize = 20.sp, modifier = Modifier
+                    .border(width = 3.dp, color = Color.Black)
+                    .fillMaxWidth()
+                    .height(40.dp)
+                    .background(Color.Cyan)
+                    .wrapContentHeight(align = Alignment.CenterVertically)
+                    .wrapContentWidth(align = Alignment.CenterHorizontally),
+                    fontWeight = FontWeight.Bold
+                )
+
+                Spacer(modifier = Modifier.padding(20.dp))
+
+                Button (
+                    onClick = onStartClick,
+                    modifier = Modifier.fillMaxWidth().height(60.dp),
+                    colors = ButtonDefaults.buttonColors(backgroundColor = Color.Transparent)
+                ) {
+                    Text("Назад", fontSize = 23.sp, color = Color.Black, fontWeight = FontWeight.Bold)
+                }
+            }
+
+            Column(
+                modifier = Modifier
+                    .align(Alignment.CenterEnd)
+                    .fillMaxWidth(0.45f)
+            ) {
+                Card(
+                    elevation = 4.dp,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(10.dp)
+                ) {
+                    Column {
+                        Row(modifier = Modifier.height(40.dp).background(Color(0xFFd5d5d5)),
+                            verticalAlignment = Alignment.CenterVertically) {
+                            Text("Запись ходов",
+                                fontSize = 23.sp,
+                                fontWeight = FontWeight.Bold,
+                                modifier = Modifier.fillMaxWidth(),
+                                textAlign = TextAlign.Center
+                            )
+                        }
+
+                        val listState = rememberLazyListState()
+                        LaunchedEffect(board.whiteMoves.size) {
+                            if(board.whiteMoves.size > 0) {
+                                listState.animateScrollToItem(board.whiteMoves.size - 1)
+                            }
+                        }
+
+                        LazyColumn(
+                            modifier = Modifier
+                                .heightIn(max = 320.dp)
+                                .fillMaxWidth(),
+                            state = listState
+                        ) {
+                            items(count = board.whiteMoves.size) { item ->
+                                Row(
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .height(30.dp)
+                                        .border(0.15.dp, color = Color.Black)
+                                        .background(Color(0xFFfff6f6))
+                                ) {
+                                    Text(
+                                        "${item + 1}.",
+                                        modifier = Modifier
+                                            .fillMaxHeight()
+                                            .weight(0.2f)
+                                            .border(0.15.dp, color = Color.Black),
+                                        textAlign = TextAlign.Center
+                                    )
+
+                                    Text(
+                                        "${board.whiteMoves[item].second}: " +
+                                                board.fromDigToNot(board.whiteMoves[item].first.first) +
+                                                " - " +
+                                                board.fromDigToNot(board.whiteMoves[item].first.second),
+                                        modifier = Modifier
+                                            .fillMaxHeight()
+                                            .weight(0.4f),
+                                        textAlign = TextAlign.Center
+                                    )
+
+                                    Text(
+                                        if(board.blackMoves.size > item)
+                                            "${board.blackMoves[item].second}: " +
+                                                    board.fromDigToNot(board.blackMoves[item].first.first) +
+                                                    " - " +
+                                                    board.fromDigToNot(board.blackMoves[item].first.second) else "",
+                                        modifier = Modifier
+                                            .fillMaxHeight()
+                                            .weight(0.4f),
+                                        textAlign = TextAlign.Center
+                                    )
+                                }
+                            }
+                        }
+                    }
+
+
+                }
+            }
+        }
+            }
+
+            /*Column(
                 modifier = Modifier
                     .border(width = 3.dp, color = Color.Black, shape = RoundedCornerShape(8.dp))
                     .fillMaxWidth().padding(10.dp),
@@ -317,10 +514,18 @@ fun GameScreen(onStartClick: () -> Unit, board: Board) {
                         )
                     }
 
+                    val listState = rememberLazyListState()
+                    LaunchedEffect(board.whiteMoves.size) {
+                        if(board.whiteMoves.size > 0) {
+                            listState.animateScrollToItem(board.whiteMoves.size - 1)
+                        }
+                    }
+
                     LazyColumn(
                         modifier = Modifier
                             .heightIn(max = 320.dp)
-                            .fillMaxWidth()
+                            .fillMaxWidth(),
+                        state = listState
                     ) {
                         items(count = board.whiteMoves.size) { item ->
                             Row(
@@ -338,16 +543,24 @@ fun GameScreen(onStartClick: () -> Unit, board: Board) {
                                         .border(0.15.dp, color = Color.Black),
                                         textAlign = TextAlign.Center
                                 )
+
                                 Text(
                                     "${board.whiteMoves[item].second}: " +
-                                            "${board.whiteMoves[item].first.first} - ${board.whiteMoves[item].first.second}",
+                                            board.fromDigToNot(board.whiteMoves[item].first.first) +
+                                            " - " +
+                                            board.fromDigToNot(board.whiteMoves[item].first.second),
                                     modifier = Modifier
                                         .fillMaxHeight()
                                         .weight(0.4f),
                                     textAlign = TextAlign.Center
                                 )
+
                                 Text(
-                                    "e5",
+                                    if(board.blackMoves.size > item)
+                                        "${board.blackMoves[item].second}: " +
+                                            board.fromDigToNot(board.blackMoves[item].first.first) +
+                                            " - " +
+                                            board.fromDigToNot(board.blackMoves[item].first.second) else "",
                                     modifier = Modifier
                                         .fillMaxHeight()
                                         .weight(0.4f),
@@ -415,17 +628,37 @@ fun GameScreen(onStartClick: () -> Unit, board: Board) {
 
             Spacer(modifier = Modifier.padding(5.dp))
 
+            Button(
+                onClick = {  },
+                modifier = Modifier.fillMaxWidth(),
+                colors = ButtonDefaults.buttonColors(backgroundColor = Color.Blue)
+            ) {
+                Text("Сохранить игру", fontSize = 23.sp, color = Color.Black, fontWeight = FontWeight.Bold)
+            }
+
+            Spacer(modifier = Modifier.padding(5.dp))
+
             Text("Turn: ${board.turn}", fontSize = 20.sp, modifier = Modifier
                 .border(width = 3.dp, color = Color.Black)
                 .fillMaxWidth()
-                .height(60.dp)
+                .height(40.dp)
                 .background(Color.Cyan)
                 .wrapContentHeight(align = Alignment.CenterVertically)
                 .wrapContentWidth(align = Alignment.CenterHorizontally),
                 fontWeight = FontWeight.Bold
             )
+
+            Spacer(modifier = Modifier.padding(20.dp))
+
+            Button (
+                onClick = onStartClick,
+                modifier = Modifier.fillMaxWidth().height(60.dp),
+                colors = ButtonDefaults.buttonColors(backgroundColor = Color.Transparent)
+            ) {
+                Text("Назад", fontSize = 23.sp, color = Color.Black, fontWeight = FontWeight.Bold)
+            }
         }
-    }
+    }*/
 }
 
 
