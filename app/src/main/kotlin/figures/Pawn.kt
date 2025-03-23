@@ -34,13 +34,13 @@ class Pawn(override var position: Int, override val colour: Boolean, override va
             if(board.positions[newPosition]?.colour == !board.turn) return true
             if(!board.isThereFigure(newPosition)) {
                 if(board.turn && (position / 8 == 4)) {
-                    if(board.blackMoves.last().first.first == newPosition + 8 &&
-                        board.blackMoves.last().second == "Pawn") board.enpassant = true
+                    if(board.allMoves.last().first.first == newPosition + 8 &&
+                        board.allMoves.last().second == "Pawn") board.enpassant = true
                     else return false
                 }
                 else if(!board.turn && (position / 8 == 3)) {
-                    if(board.whiteMoves.last().first.first == newPosition - 8 &&
-                        board.whiteMoves.last().second == "Pawn") board.enpassant = true
+                    if(board.allMoves.last().first.first == newPosition - 8 &&
+                        board.allMoves.last().second == "Pawn") board.enpassant = true
                     else return false
                 }
                 else return false

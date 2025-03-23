@@ -448,10 +448,7 @@ fun GameScreen(onStartClick: () -> Unit, board: Board) {
                                     )
 
                                     Text(
-                                        "${board.whiteMoves[item].second}: " +
-                                                board.fromDigToNot(board.whiteMoves[item].first.first) +
-                                                " - " +
-                                                board.fromDigToNot(board.whiteMoves[item].first.second),
+                                        board.whiteMoves[item],
                                         modifier = Modifier
                                             .fillMaxHeight()
                                             .weight(0.4f)
@@ -463,11 +460,7 @@ fun GameScreen(onStartClick: () -> Unit, board: Board) {
                                     )
 
                                     Text(
-                                        if(board.blackMoves.size > item)
-                                            "${board.blackMoves[item].second}: " +
-                                                    board.fromDigToNot(board.blackMoves[item].first.first) +
-                                                    " - " +
-                                                    board.fromDigToNot(board.blackMoves[item].first.second) else "",
+                                        if(board.blackMoves.size > item) board.blackMoves[item] else "",
                                         modifier = Modifier
                                             .fillMaxHeight()
                                             .weight(0.4f)
