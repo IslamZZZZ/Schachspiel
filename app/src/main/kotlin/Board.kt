@@ -5,12 +5,14 @@ import figures.*
 import kotlin.math.abs
 
 class Board {
-    val positions: MutableMap<Int, Figure> = mutableMapOf()
-    val whiteMoves: MutableList<Pair< Pair<Int, Int>, String > > = mutableListOf()
-    val blackMoves: MutableList<Pair< Pair<Int, Int>, String > > = mutableListOf()
+    var positions: MutableMap<Int, Figure> = mutableMapOf()
+    val whiteMoves: MutableList<String> = mutableListOf()
+    val blackMoves: MutableList<String> = mutableListOf()
+    val allMoves: MutableList< Pair< Pair<Int, Int>, String > > = mutableListOf()
     var turn by mutableStateOf(true)
     var isWhiteCastled: Boolean = false
     var isBlackCastled: Boolean = false
+    var isCastled: Boolean = false
     var enpassant: Boolean = false
     var isChecked: Boolean = false
     var gameWinner: Int = 0
@@ -28,22 +30,94 @@ class Board {
     fun move(startPosition: Int, finalPosition: Int): Boolean {
         if(!isThereFigure(startPosition)) return false
 
-        /*val copiedPositions = positions.toMutableMap()
-        copiedPositions[startPosition]?.let { copiedPositions[finalPosition] = it }
-        copiedPositions.remove(startPosition)
-        if(schach(copiedPositions)) return false*/
+        if(schach(startPosition, finalPosition)) return false
+
 
         if(turn == positions[startPosition]?.colour && (positions[startPosition]?.canMove(finalPosition) == true)) {
-            positions[startPosition]?.let{
-                positions[finalPosition] = it
-                it.position = finalPosition
+            if(!isCastled) {
+                positions[startPosition]?.let {
+                    positions[finalPosition] = it
+                    it.position = finalPosition
 
-                if(enpassant) {
-                    if(it.colour) positions.remove(finalPosition - 8)
-                    else positions.remove(finalPosition + 8)
+                    if (enpassant) {
+                        if (it.colour) positions.remove(finalPosition - 8)
+                        else positions.remove(finalPosition + 8)
 
-                    enpassant = false
+                        enpassant = false
+                    }
                 }
+            }
+            else{
+                if(startPosition == 4 && (finalPosition == 2 || finalPosition == 0)) {
+                    positions[4]?.let {
+                        positions[2] = it
+                        it.position = 2
+                    }
+
+                    positions[0]?.let{
+                        positions[3] = it
+                        it.position = 3
+                    }
+
+                    positions.remove(0)
+                    positions.remove(4)
+
+                    whiteMoves.add("0-0-0")
+                }
+                else if(startPosition == 4 && (finalPosition == 6 || finalPosition == 7)) {
+                    positions[4]?.let {
+                        positions[6] = it
+                        it.position = 6
+                    }
+
+                    positions[7]?.let{
+                        positions[5] = it
+                        it.position = 5
+                    }
+
+                    positions.remove(7)
+                    positions.remove(4)
+
+                    whiteMoves.add("0-0")
+                }
+                else if(startPosition == 60 && (finalPosition == 58 || finalPosition == 56)) {
+                    positions[60]?.let {
+                        positions[58] = it
+                        it.position = 58
+                    }
+
+                    positions[56]?.let{
+                        positions[59] = it
+                        it.position = 59
+                    }
+
+                    positions.remove(56)
+                    positions.remove(60)
+
+                    blackMoves.add("0-0-0")
+                }
+                else if(startPosition == 60 && (finalPosition == 62 || finalPosition == 63)) {
+                    positions[60]?.let {
+                        positions[62] = it
+                        it.position = 62
+                    }
+
+                    positions[63]?.let{
+                        positions[61] = it
+                        it.position = 61
+                    }
+
+                    positions.remove(63)
+                    positions.remove(60)
+
+                    blackMoves.add("0-0")
+                }
+                else{isCastled = false
+                return false}
+                isCastled = false
+                updateComposePosition()
+                this.turn = !turn
+                return true
             }
 
 
@@ -57,8 +131,12 @@ class Board {
                     else -> "Rook"
                 }
 
-                if(turn) whiteMoves.add(Pair(Pair(startPosition, finalPosition), figure))
-                else blackMoves.add(Pair(Pair(startPosition, finalPosition), figure))
+                if(turn) whiteMoves.add("$figure: ${fromDigToNot(startPosition)} - ${fromDigToNot(finalPosition)}")
+                else blackMoves.add("$figure: ${fromDigToNot(startPosition)} - ${fromDigToNot(finalPosition)}")
+
+                allMoves.add(Pair(Pair(startPosition, finalPosition), figure))
+
+                println("$figure has moved from $startPosition to $finalPosition")
             }
 
             positions.remove(startPosition)
@@ -66,7 +144,7 @@ class Board {
             this.turn = !turn
 
             updateComposePosition()
-            println("has moved from $startPosition to $finalPosition")
+
 
             return true
         }
@@ -86,14 +164,36 @@ class Board {
             else -> "h"
         }
 
-        return "${letter}${ (square / 8) + 1}"
+        return "${letter}${ (square / 8) + 1 }"
     }
 
-    fun schach(copiedPositions: MutableMap<Int, Figure>): Boolean {
-        val king = copiedPositions.values.find { it is King && it.colour == this.turn}
+    fun schach(startPosition: Int, finalPosition: Int): Boolean {
+        positions[startPosition]?.let {
+            positions[finalPosition] = it
+            it.position = finalPosition
+        }
+
+        positions.remove(startPosition)
+
+
+        if(istSchach()) isChecked = true
+
+        positions[finalPosition]?.let{ it.position = startPosition }
+        positions = composePositions.value.toMutableMap()
+
+        if(isChecked) {
+            isChecked = false
+            return true
+        }
+
+        return false
+    }
+
+    fun istSchach(): Boolean {
+        val king = positions.values.find { (it is King) && (it.colour == this.turn) }
 
         king?.let {
-            for(fig in positions.values) if(fig.colour != it.colour && fig.canMove(it.position)) return true
+            for(fig in positions.values) if( (fig.colour != it.colour) && (fig.canMove(it.position))) return true
         }
 
         return false
@@ -136,6 +236,11 @@ class Board {
 
     fun updateComposePosition() {
         composePositions.value = positions.toMap()
+    }
+
+    fun hasMovedFrom(startPosition: Int): Boolean {
+        for(pos in allMoves) if(pos.first.first == startPosition) return true
+        return false
     }
 }
 

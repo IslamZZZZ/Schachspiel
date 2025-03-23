@@ -422,7 +422,7 @@ fun GameScreen(onStartClick: () -> Unit, board: Board) {
 
                         LazyColumn(
                             modifier = Modifier
-                                .heightIn(max = 320.dp)
+                                .heightIn(max = 600.dp)
                                 .fillMaxWidth(),
                             state = listState
                         ) {
@@ -430,7 +430,7 @@ fun GameScreen(onStartClick: () -> Unit, board: Board) {
                                 Row(
                                     modifier = Modifier
                                         .fillMaxWidth()
-                                        .height(30.dp)
+                                        .height(45.dp)
                                         .border(0.15.dp, color = Color.Black)
                                         .background(Color(0xFFfff6f6))
                                 ) {
@@ -439,30 +439,35 @@ fun GameScreen(onStartClick: () -> Unit, board: Board) {
                                         modifier = Modifier
                                             .fillMaxHeight()
                                             .weight(0.2f)
-                                            .border(0.15.dp, color = Color.Black),
+                                            .border(0.15.dp, color = Color.Black)
+                                            .wrapContentHeight(align = Alignment.CenterVertically)
+                                            .wrapContentWidth(align = Alignment.CenterHorizontally),
+                                        fontSize = 17.sp,
+                                        fontWeight = FontWeight.Bold,
                                         textAlign = TextAlign.Center
                                     )
 
                                     Text(
-                                        "${board.whiteMoves[item].second}: " +
-                                                board.fromDigToNot(board.whiteMoves[item].first.first) +
-                                                " - " +
-                                                board.fromDigToNot(board.whiteMoves[item].first.second),
+                                        board.whiteMoves[item],
                                         modifier = Modifier
                                             .fillMaxHeight()
-                                            .weight(0.4f),
+                                            .weight(0.4f)
+                                            .wrapContentHeight(align = Alignment.CenterVertically)
+                                            .wrapContentWidth(align = Alignment.CenterHorizontally),
+                                        fontSize = 17.sp,
+                                        fontWeight = FontWeight.Bold,
                                         textAlign = TextAlign.Center
                                     )
 
                                     Text(
-                                        if(board.blackMoves.size > item)
-                                            "${board.blackMoves[item].second}: " +
-                                                    board.fromDigToNot(board.blackMoves[item].first.first) +
-                                                    " - " +
-                                                    board.fromDigToNot(board.blackMoves[item].first.second) else "",
+                                        if(board.blackMoves.size > item) board.blackMoves[item] else "",
                                         modifier = Modifier
                                             .fillMaxHeight()
-                                            .weight(0.4f),
+                                            .weight(0.4f)
+                                            .wrapContentHeight(align = Alignment.CenterVertically)
+                                            .wrapContentWidth(align = Alignment.CenterHorizontally),
+                                        fontSize = 17.sp,
+                                        fontWeight = FontWeight.Bold,
                                         textAlign = TextAlign.Center
                                     )
                                 }
