@@ -10,14 +10,30 @@ class Board {
     val blackMoves: MutableList<String> = mutableListOf()
     val allMoves: MutableList< Pair< Pair<Int, Int>, String > > = mutableListOf()
     var turn by mutableStateOf(true)
-    var isWhiteCastled: Boolean = false
-    var isBlackCastled: Boolean = false
     var isCastled: Boolean = false
     var enpassant: Boolean = false
     var isChecked: Boolean = false
+    var composeChecked by mutableStateOf(false)
+    var isPromoted by mutableStateOf(false)
+    var promotedPosition by mutableStateOf(-1)
+    //var promotedFigure = "Queen"
     var gameWinner: Int = 0
 
     val composePositions = mutableStateOf(emptyMap<Int, Figure>())
+
+    fun clean() {
+        this.positions.clear()
+        this.composePositions.value = emptyMap<Int, Figure>()
+        isPromoted = false
+        isCastled = false
+        enpassant = false
+        isChecked = false
+        whiteMoves.clear()
+        blackMoves.clear()
+        allMoves.clear()
+        this.turn = true
+        updateComposePosition()
+    }
 
     /*init {
         setup()
@@ -36,6 +52,18 @@ class Board {
         if(turn == positions[startPosition]?.colour && (positions[startPosition]?.canMove(finalPosition) == true)) {
             if(!isCastled) {
                 positions[startPosition]?.let {
+                   if( ( (turn && (finalPosition / 8) == 7) || (!turn && (finalPosition / 8) == 0) ) && it is Pawn) {
+                        isPromoted = true
+                        promotedPosition = finalPosition
+
+                        positions.remove(startPosition)
+                        updateComposePosition()
+
+                        this.turn = !turn
+                        return true
+                   }
+
+
                     positions[finalPosition] = it
                     it.position = finalPosition
 
@@ -120,6 +148,7 @@ class Board {
                 return true
             }
 
+            if(composeChecked) composeChecked = false
 
             positions[startPosition]?.let{
                 val figure = when (it) {
@@ -143,6 +172,8 @@ class Board {
 
             this.turn = !turn
 
+            if(istSchach()) composeChecked = true
+
             updateComposePosition()
 
 
@@ -150,6 +181,19 @@ class Board {
         }
 
         return false
+    }
+
+    fun promotingPawn(promotedFigure: String) {
+        when(promotedFigure) {
+            "Queen" -> Queen(promotedPosition, !turn, this)
+            "Rook" -> Rook(promotedPosition, !turn, this)
+            "Knight" -> Knight(promotedPosition, !turn, this)
+            "Bishop" -> Bishop(promotedPosition, !turn, this)
+        }
+        updateComposePosition()
+        isPromoted = false
+        if(!turn) whiteMoves.add("Pawn $promotedFigure ${fromDigToNot(promotedPosition)}")
+        else blackMoves.add("Pawn $promotedFigure ${fromDigToNot(promotedPosition)}")
     }
 
     fun fromDigToNot(square: Int): String {
@@ -199,17 +243,10 @@ class Board {
         return false
     }
 
-    fun clean() {
-        this.positions.clear()
-    }
 
     fun reset() {
         this.clean()
         this.setup()
-        this.turn = true
-        whiteMoves.clear()
-        blackMoves.clear()
-        updateComposePosition()
     }
 
     fun setup() {

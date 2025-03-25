@@ -29,8 +29,8 @@ class King(override var position: Int, override val colour: Boolean, override va
             if(it is King) return (position - newPosition) in avaliableMoves
         }
 
-        if(!board.istSchach() && !board.hasMovedFrom(4)) {
-            if (colour) {
+        if(!board.istSchach()) {
+            if (colour && !board.hasMovedFrom(4) && position == 4) {
                 if (newPosition == 2 || newPosition == 0) {
                     if (!board.schach(4, 3) &&
                         !board.schach(4, 2) &&
@@ -47,7 +47,7 @@ class King(override var position: Int, override val colour: Boolean, override va
                         !board.isThereFigure(6)
                     ) board.isCastled = true
                 }
-            } else {
+            } else if(!colour && !board.hasMovedFrom(60) && position == 60) {
                 if (newPosition == 58 || newPosition == 56) {
                     if (!board.schach(60, 59) &&
                         !board.schach(60, 58) &&
