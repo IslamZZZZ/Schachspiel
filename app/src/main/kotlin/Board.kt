@@ -3,6 +3,7 @@ package Board
 import androidx.compose.runtime.*
 import figures.*
 import kotlin.math.abs
+import kotlin.math.sign
 
 class Board {
     var positions: MutableMap<Int, Figure> = mutableMapOf()
@@ -16,14 +17,16 @@ class Board {
     var composeChecked by mutableStateOf(false)
     var isPromoted by mutableStateOf(false)
     var promotedPosition by mutableStateOf(-1)
-    //var promotedFigure = "Queen"
-    var gameWinner: Int = 0
+    var threat: Int = -1
+    var gameWinner by mutableStateOf(0)
 
     val composePositions = mutableStateOf(emptyMap<Int, Figure>())
 
     fun clean() {
         this.positions.clear()
         this.composePositions.value = emptyMap<Int, Figure>()
+        gameWinner = 0
+        composeChecked = false
         isPromoted = false
         isCastled = false
         enpassant = false
@@ -31,6 +34,7 @@ class Board {
         whiteMoves.clear()
         blackMoves.clear()
         allMoves.clear()
+        threat = -1
         this.turn = true
         updateComposePosition()
     }
@@ -44,12 +48,16 @@ class Board {
     }
 
     fun move(startPosition: Int, finalPosition: Int): Boolean {
+        if(gameWinner != 0) return false
+
         if(!isThereFigure(startPosition)) return false
 
         if(schach(startPosition, finalPosition)) return false
 
 
         if(turn == positions[startPosition]?.colour && (positions[startPosition]?.canMove(finalPosition) == true)) {
+            if(composeChecked) composeChecked = false
+
             if(!isCastled) {
                 positions[startPosition]?.let {
                    if( ( (turn && (finalPosition / 8) == 7) || (!turn && (finalPosition / 8) == 0) ) && it is Pawn) {
@@ -148,8 +156,6 @@ class Board {
                 return true
             }
 
-            if(composeChecked) composeChecked = false
-
             positions[startPosition]?.let{
                 val figure = when (it) {
                     is Bishop -> "Bishop"
@@ -172,15 +178,63 @@ class Board {
 
             this.turn = !turn
 
-            if(istSchach()) composeChecked = true
-
             updateComposePosition()
+
+
+            threat = -1
+            val checks = istSchach()
+            println("threat: $threat checks: $checks")
+            if(checkMate(checks)) gameWinner = if(turn) -1 else 1
+            else if(checks != 0) composeChecked = true
 
 
             return true
         }
 
         return false
+    }
+
+
+    fun checkMate(checks: Int): Boolean {
+        if(checks == 0) return false
+        val king = positions.values.find { (it is King) && (it.colour == this.turn) }
+
+        king?.let {
+            for(avalMove in listOf(-1, 1, -7, 7, -8, 8, -9, 9)) {
+                if(it.canMove(it.position + avalMove) &&
+                    !schach(it.position, it.position + avalMove)) return false
+            }
+
+            if(checks == 1) {
+                val dif = threat - it.position
+                val per = if ((threat - it.position) % 9 == 0) dif.sign * 9
+                else if ((threat - it.position) % 7 == 0) dif.sign * 7
+                else if ((threat - it.position) % 8 == 0) dif.sign * 8
+                else if ( (threat / 8) == (it.position / 8) ) dif.sign * 1
+                else 0
+
+                println("dif: $dif per: $per")
+                if (per == 0) {
+                    for (fig in positions.values) if (fig.colour == turn) {
+                        if (fig.canMove(threat) && !schach(fig.position, threat)) return false
+                    }
+                }
+
+                else {
+                    var newPosition = it.position + per
+                    while (dif.sign * newPosition <= threat * dif.sign) {
+                        println("newPosition: $newPosition")
+                        for (fig in positions.values) if (fig.colour == turn && fig !is King) {
+                            if (fig.canMove(newPosition) && !schach(fig.position, newPosition)) return false
+                        }
+
+                        newPosition += per
+                    }
+                }
+            }
+        }
+
+        return true
     }
 
     fun promotingPawn(promotedFigure: String) {
@@ -220,7 +274,7 @@ class Board {
         positions.remove(startPosition)
 
 
-        if(istSchach()) isChecked = true
+        if(istSchach() != 0) isChecked = true
 
         positions[finalPosition]?.let{ it.position = startPosition }
         positions = composePositions.value.toMutableMap()
@@ -233,14 +287,18 @@ class Board {
         return false
     }
 
-    fun istSchach(): Boolean {
+    fun istSchach(): Int {
+        var count = 0
         val king = positions.values.find { (it is King) && (it.colour == this.turn) }
 
         king?.let {
-            for(fig in positions.values) if( (fig.colour != it.colour) && (fig.canMove(it.position))) return true
+            for(fig in positions.values) if( (fig.colour != it.colour) && (fig.canMove(it.position))) {
+                count++
+                if(threat == -1) threat = fig.position
+            }
         }
 
-        return false
+        return count
     }
 
 

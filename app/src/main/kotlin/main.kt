@@ -205,6 +205,44 @@ fun GameScreen(onStartClick: () -> Unit, board: Board) {
     Box(modifier = Modifier.fillMaxSize().background(Color(0xFFffdfdf))) {
 
 
+        if(board.gameWinner != 0) {
+            Dialog(
+                onDismissRequest = {},
+                properties = DialogProperties(
+                    dismissOnBackPress = false,
+                    dismissOnClickOutside = false
+                )
+            ) {
+                Card() {
+                    Column(
+                        horizontalAlignment = Alignment.CenterHorizontally
+                    ) {
+                        if(board.gameWinner == 1) Text("YOU WON!!!",
+                            fontSize = 23.sp,
+                            color = Color.Black,
+                            fontWeight = FontWeight.Bold,
+                            modifier = Modifier.padding(10.dp)
+                            )
+                        else if(board.gameWinner == -1) Text("YOU LOST(((",
+                            fontSize = 23.sp,
+                            color = Color.Black,
+                            fontWeight = FontWeight.Bold,
+                            modifier = Modifier.padding(10.dp)
+                        )
+
+                        Button(
+                            onClick = { board.reset() },
+                            modifier = Modifier.width(200.dp).height(60.dp).padding(10.dp),
+                            colors = ButtonDefaults.buttonColors(backgroundColor = Color.Green)
+                        ) {
+                            Text("Обновить игру", fontSize = 23.sp, color = Color.Black, fontWeight = FontWeight.Bold)
+                        }
+                    }
+                }
+            }
+        }
+
+
         if(board.isPromoted) {
             Dialog(
                 onDismissRequest = {},
@@ -314,6 +352,8 @@ fun GameScreen(onStartClick: () -> Unit, board: Board) {
                                 .background(if(selectedPosition == square) Color.Green
                                 else if(board.isThereFigure(square) && (board.positions[square]?.colour == board.turn)
                                     && board.positions[square] is King && board.composeChecked) Color(0xFFf5fba7)
+                                else if(board.isThereFigure(square) && (board.positions[square]?.colour == board.turn)
+                                    && board.positions[square] is King && board.gameWinner != 0) Color.White
                                 else colour)
                                 .weight(0.125f)
                                 .fillMaxSize()
