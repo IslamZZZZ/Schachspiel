@@ -11,29 +11,64 @@ import kotlin.math.abs
 
     override fun canMove(newPosition: Int): Boolean {
 <span class="fc" id="L13">        val avaliableMoves: MutableList&lt;Int&gt; = mutableListOf(-1, 1, -7, 7, -8, 8, -9, 9)</span>
-        /*if( (newPosition in listOf(2,6) &amp;&amp; colour) || (newPosition in listOf(58,62) &amp;&amp; !colour) ) {
-            if(colour &amp;&amp; position != 4) TODO()
-            if(!colour &amp;&amp; position != 60) TODO()
-            if(colour) {
-                if(newPosition == 2) {
-                    if(board.isThereFigure(1) || board.isThereFigure(2) ||
-                        board.isThereFigure(3)) TODO()
 
+        //Костыль для избежания рекурсии, ибо далее вызывается метод шаха, он вызывает метод ходьбы от каждой
+        //фигуры, в том числе и короля, который в свою очередь опять вызывает метод шаха
+<span class="fc bfc" id="L17" title="All 2 branches covered.">        board.positions[newPosition]?.let{</span>
+<span class="pc bpc" id="L18" title="1 of 2 branches missed.">            if(it is King) return (position - newPosition) in avaliableMoves</span>
+<span class="fc" id="L19">        }</span>
+
+<span class="pc bpc" id="L21" title="1 of 2 branches missed.">        if(!board.composeChecked) {</span>
+<span class="pc bpc" id="L22" title="2 of 6 branches missed.">            if (colour &amp;&amp; !board.hasMovedFrom(4) &amp;&amp; position == 4) {</span>
+<span class="pc bpc" id="L23" title="2 of 3 branches missed.">                if (newPosition == 2 || newPosition == 0) {</span>
+<span class="nc bnc" id="L24" title="All 2 branches missed.">                    if (!board.schach(4, 3) &amp;&amp;</span>
+<span class="nc bnc" id="L25" title="All 2 branches missed.">                        !board.schach(4, 2) &amp;&amp;</span>
+<span class="nc bnc" id="L26" title="All 2 branches missed.">                        !board.hasMovedFrom(0) &amp;&amp;</span>
+<span class="nc bnc" id="L27" title="All 2 branches missed.">                        !board.isThereFigure(3) &amp;&amp;</span>
+<span class="nc bnc" id="L28" title="All 2 branches missed.">                        !board.isThereFigure(2) &amp;&amp;</span>
+<span class="nc bnc" id="L29" title="All 2 branches missed.">                        !board.isThereFigure(1)</span>
+<span class="nc" id="L30">                    ) board.isCastled = true</span>
+                } else if (newPosition == 6 || newPosition == 7) {
+<span class="nc bnc" id="L32" title="All 2 branches missed.">                    if (!board.schach(4, 5) &amp;&amp;</span>
+<span class="nc bnc" id="L33" title="All 2 branches missed.">                        !board.schach(4, 6) &amp;&amp;</span>
+<span class="nc bnc" id="L34" title="All 2 branches missed.">                        !board.hasMovedFrom(7) &amp;&amp;</span>
+<span class="nc bnc" id="L35" title="All 2 branches missed.">                        !board.isThereFigure(5) &amp;&amp;</span>
+<span class="nc bnc" id="L36" title="All 2 branches missed.">                        !board.isThereFigure(6)</span>
+<span class="pc" id="L37">                    ) board.isCastled = true</span>
+                }
+<span class="pc bpc" id="L39" title="5 of 6 branches missed.">            } else if(!colour &amp;&amp; !board.hasMovedFrom(60) &amp;&amp; position == 60) {</span>
+<span class="nc bnc" id="L40" title="All 3 branches missed.">                if (newPosition == 58 || newPosition == 56) {</span>
+<span class="nc bnc" id="L41" title="All 2 branches missed.">                    if (!board.schach(60, 59) &amp;&amp;</span>
+<span class="nc bnc" id="L42" title="All 2 branches missed.">                        !board.schach(60, 58) &amp;&amp;</span>
+<span class="nc bnc" id="L43" title="All 2 branches missed.">                        !board.hasMovedFrom(56) &amp;&amp;</span>
+<span class="nc bnc" id="L44" title="All 2 branches missed.">                        !board.isThereFigure(59) &amp;&amp;</span>
+<span class="nc bnc" id="L45" title="All 2 branches missed.">                        !board.isThereFigure(58) &amp;&amp;</span>
+<span class="nc bnc" id="L46" title="All 2 branches missed.">                        !board.isThereFigure(57)</span>
+<span class="nc" id="L47">                    ) board.isCastled = true</span>
+                } else if (newPosition == 62 || newPosition == 63) {
+<span class="nc bnc" id="L49" title="All 2 branches missed.">                    if (!board.schach(60, 61) &amp;&amp;</span>
+<span class="nc bnc" id="L50" title="All 2 branches missed.">                        !board.schach(60, 62) &amp;&amp;</span>
+<span class="nc bnc" id="L51" title="All 2 branches missed.">                        !board.hasMovedFrom(63) &amp;&amp;</span>
+<span class="nc bnc" id="L52" title="All 2 branches missed.">                        !board.isThereFigure(61) &amp;&amp;</span>
+<span class="nc bnc" id="L53" title="All 2 branches missed.">                        !board.isThereFigure(62)</span>
+<span class="nc" id="L54">                    ) board.isCastled = true</span>
                 }
             }
-        }*/
 
-<span class="fc bfc" id="L26" title="All 2 branches covered.">        if( (position / 8) == 7) avaliableMoves.removeAll(listOf(7,8,9))</span>
-<span class="fc bfc" id="L27" title="All 2 branches covered.">        else if( (position / 8) == 0) avaliableMoves.removeAll(listOf(-7, -8, -9))</span>
+<span class="pc bpc" id="L58" title="1 of 2 branches missed.">            if(board.isCastled) return true</span>
+        }
 
-<span class="fc bfc" id="L29" title="All 2 branches covered.">        if( (position % 8) == 7) avaliableMoves.removeAll(listOf(9, 1, -7))</span>
-<span class="fc bfc" id="L30" title="All 2 branches covered.">        else if( (position % 8) == 0) avaliableMoves.removeAll(listOf(7, -1, -9))</span>
+<span class="fc bfc" id="L61" title="All 2 branches covered.">        if( (position / 8) == 7) avaliableMoves.removeAll(listOf(7,8,9))</span>
+<span class="fc bfc" id="L62" title="All 2 branches covered.">        else if( (position / 8) == 0) avaliableMoves.removeAll(listOf(-7, -8, -9))</span>
 
-<span class="fc bfc" id="L32" title="All 2 branches covered.">        if( (newPosition - position) !in avaliableMoves) return false</span>
+<span class="fc bfc" id="L64" title="All 2 branches covered.">        if( (position % 8) == 7) avaliableMoves.removeAll(listOf(9, 1, -7))</span>
+<span class="fc bfc" id="L65" title="All 2 branches covered.">        else if( (position % 8) == 0) avaliableMoves.removeAll(listOf(7, -1, -9))</span>
 
-<span class="pc bpc" id="L34" title="1 of 8 branches missed.">        if(board.isThereFigure(newPosition) &amp;&amp; board.positions[newPosition]?.colour == colour) return false</span>
+<span class="fc bfc" id="L67" title="All 2 branches covered.">        if( (newPosition - position) !in avaliableMoves) return false</span>
 
-<span class="fc" id="L36">        return true</span>
+<span class="pc bpc" id="L69" title="1 of 8 branches missed.">        if(board.isThereFigure(newPosition) &amp;&amp; board.positions[newPosition]?.colour == colour) return false</span>
+
+<span class="fc" id="L71">        return true</span>
     }
 
 }
