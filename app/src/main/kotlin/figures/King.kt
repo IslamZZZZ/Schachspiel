@@ -11,17 +11,6 @@ class King(override var position: Int, override val colour: Boolean, override va
 
     override fun canMove(newPosition: Int): Boolean {
         val avaliableMoves: MutableList<Int> = mutableListOf(-1, 1, -7, 7, -8, 8, -9, 9)
-        /*if( (newPosition in listOf(2,6) && colour) || (newPosition in listOf(58,62) && !colour) ) {
-            if(colour && position != 4) TODO()
-            if(!colour && position != 60) TODO()
-            if(colour) {
-                if(newPosition == 2) {
-                    if(board.isThereFigure(1) || board.isThereFigure(2) ||
-                        board.isThereFigure(3)) TODO()
-
-                }
-            }
-        }*/
 
         //Костыль для избежания рекурсии, ибо далее вызывается метод шаха, он вызывает метод ходьбы от каждой
         //фигуры, в том числе и короля, который в свою очередь опять вызывает метод шаха
@@ -29,8 +18,8 @@ class King(override var position: Int, override val colour: Boolean, override va
             if(it is King) return (position - newPosition) in avaliableMoves
         }
 
-        if(!board.istSchach() && !board.hasMovedFrom(4)) {
-            if (colour) {
+        if(!board.composeChecked) {
+            if (colour && !board.hasMovedFrom(4) && position == 4) {
                 if (newPosition == 2 || newPosition == 0) {
                     if (!board.schach(4, 3) &&
                         !board.schach(4, 2) &&
@@ -47,7 +36,7 @@ class King(override var position: Int, override val colour: Boolean, override va
                         !board.isThereFigure(6)
                     ) board.isCastled = true
                 }
-            } else {
+            } else if(!colour && !board.hasMovedFrom(60) && position == 60) {
                 if (newPosition == 58 || newPosition == 56) {
                     if (!board.schach(60, 59) &&
                         !board.schach(60, 58) &&
