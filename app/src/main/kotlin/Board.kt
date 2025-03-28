@@ -60,7 +60,21 @@ class Board {
 
             if(!isCastled) {
                 positions[startPosition]?.let {
-                   if( ( (turn && (finalPosition / 8) == 7) || (!turn && (finalPosition / 8) == 0) ) && it is Pawn) {
+                    if(it is Pawn) {
+                        val dif = finalPosition - startPosition
+                        if((abs(dif) == 8 - dif.sign && startPosition % 8 != 0) ||
+                            (abs(dif) == 8 + dif.sign && startPosition % 8 != 7)) {
+                            if(turn && (startPosition / 8 == 4)) {
+                                if(allMoves.last().first.first == finalPosition + 8 &&
+                                    allMoves.last().second == "") enpassant = true
+                            }
+                            else if(!turn && (startPosition / 8 == 3)) {
+                                if(allMoves.last().first.first == finalPosition - 8 &&
+                                    allMoves.last().second == "") enpassant = true
+                            }
+                        }
+                    }
+                    if( ( (turn && (finalPosition / 8) == 7) || (!turn && (finalPosition / 8) == 0) ) && it is Pawn) {
                         isPromoted = true
                         promotedPosition = finalPosition
 
@@ -69,11 +83,36 @@ class Board {
 
                         this.turn = !turn
                         return true
-                   }
+                    }
+                    val figure = when (it) {
+                        is Bishop -> "B"
+                        is King -> "K"
+                        is Knight -> "N"
+                        is Pawn -> ""
+                        is Queen -> "Q"
+                        else -> "R"
+                    }
 
+
+                    val sign = if(isThereFigure(finalPosition) || enpassant) "x"
+                    else ""
+
+                    var beforeSign = if(figure == "" && sign == "x") getCol(startPosition)
+                    else ""
+
+                    for(fig in positions.values) {
+                        if(fig.colour == turn) {
+                            if(it.javaClass == fig.javaClass && fig.position != it.position
+                                && fig.canMove(finalPosition)) beforeSign = getCol(startPosition)
+                        }
+                    }
 
                     positions[finalPosition] = it
                     it.position = finalPosition
+
+                    positions.remove(startPosition)
+
+                    this.turn = !turn
 
                     if (enpassant) {
                         if (it.colour) positions.remove(finalPosition - 8)
@@ -81,6 +120,33 @@ class Board {
 
                         enpassant = false
                     }
+
+                    updateComposePosition()
+
+                    threat = -1
+                    val checks = istSchach()
+                    println("threat: $threat checks: $checks")
+                    if(checkMate(checks)) gameWinner = if(turn) -1 else 1
+                    else if(checks != 0) composeChecked = true
+
+                    val isPlus = if(composeChecked) "+"
+                    else if(gameWinner != 0) "#"
+                    else ""
+
+                    if (!turn) whiteMoves.add("$figure$beforeSign$sign${fromDigToNot(finalPosition)}$isPlus")
+                    else blackMoves.add("$figure$beforeSign$sign${fromDigToNot(finalPosition)}$isPlus")
+
+
+                    allMoves.add(Pair(Pair(startPosition, finalPosition), figure))
+
+                    println("$figure has moved from $startPosition to $finalPosition")
+
+
+                    return true
+
+
+
+
                 }
             }
             else{
@@ -155,40 +221,6 @@ class Board {
                 this.turn = !turn
                 return true
             }
-
-            positions[startPosition]?.let{
-                val figure = when (it) {
-                    is Bishop -> "Bishop"
-                    is King -> "King"
-                    is Knight -> "Knight"
-                    is Pawn -> "Pawn"
-                    is Queen -> "Queen"
-                    else -> "Rook"
-                }
-
-                if(turn) whiteMoves.add("$figure: ${fromDigToNot(startPosition)} - ${fromDigToNot(finalPosition)}")
-                else blackMoves.add("$figure: ${fromDigToNot(startPosition)} - ${fromDigToNot(finalPosition)}")
-
-                allMoves.add(Pair(Pair(startPosition, finalPosition), figure))
-
-                println("$figure has moved from $startPosition to $finalPosition")
-            }
-
-            positions.remove(startPosition)
-
-            this.turn = !turn
-
-            updateComposePosition()
-
-
-            threat = -1
-            val checks = istSchach()
-            println("threat: $threat checks: $checks")
-            if(checkMate(checks)) gameWinner = if(turn) -1 else 1
-            else if(checks != 0) composeChecked = true
-
-
-            return true
         }
 
         return false
@@ -246,11 +278,20 @@ class Board {
         }
         updateComposePosition()
         isPromoted = false
-        if(!turn) whiteMoves.add("Pawn $promotedFigure ${fromDigToNot(promotedPosition)}")
-        else blackMoves.add("Pawn $promotedFigure ${fromDigToNot(promotedPosition)}")
+        if(!turn) whiteMoves.add("Pawn=$promotedFigure${fromDigToNot(promotedPosition)}")
+        else blackMoves.add("Pawn=$promotedFigure${fromDigToNot(promotedPosition)}")
+
+        val checks = istSchach()
+        println("threat: $threat checks: $checks")
+        if(checkMate(checks)) gameWinner = if(turn) -1 else 1
+        else if(checks != 0) composeChecked = true
     }
 
     fun fromDigToNot(square: Int): String {
+        return "${getCol(square)}${getRow(square)}"
+    }
+
+    private fun getCol(square: Int): String {
         val letter = when(square % 8) {
             0 -> "a"
             1 -> "b"
@@ -261,9 +302,10 @@ class Board {
             6 -> "g"
             else -> "h"
         }
-
-        return "${letter}${ (square / 8) + 1 }"
+        return letter
     }
+
+    private fun getRow(square: Int): Int {return (square / 8) + 1}
 
     fun schach(startPosition: Int, finalPosition: Int): Boolean {
         positions[startPosition]?.let {
@@ -287,7 +329,7 @@ class Board {
         return false
     }
 
-    fun istSchach(): Int {
+    private fun istSchach(): Int {
         var count = 0
         val king = positions.values.find { (it is King) && (it.colour == this.turn) }
 
@@ -329,7 +371,7 @@ class Board {
         updateComposePosition()
     }
 
-    fun updateComposePosition() {
+    private fun updateComposePosition() {
         composePositions.value = positions.toMap()
     }
 

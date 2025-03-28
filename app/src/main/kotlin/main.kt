@@ -232,10 +232,10 @@ fun GameScreen(onStartClick: () -> Unit, board: Board) {
 
                         Button(
                             onClick = { board.reset() },
-                            modifier = Modifier.width(200.dp).height(60.dp).padding(10.dp),
+                            modifier = Modifier.width(250.dp).height(60.dp).padding(10.dp),
                             colors = ButtonDefaults.buttonColors(backgroundColor = Color.Green)
                         ) {
-                            Text("Обновить игру", fontSize = 23.sp, color = Color.Black, fontWeight = FontWeight.Bold)
+                            Text("Обновить игру", fontSize = 18.sp, color = Color.Black, fontWeight = FontWeight.Bold)
                         }
                     }
                 }
@@ -450,7 +450,7 @@ fun GameScreen(onStartClick: () -> Unit, board: Board) {
                 Spacer(modifier = Modifier.padding(5.dp))
 
                 Button(
-                    onClick = {  },
+                    onClick = { board.gameWinner = if(board.turn) -1 else 1 },
                     modifier = Modifier.fillMaxWidth(),
                     colors = ButtonDefaults.buttonColors(backgroundColor = Color.Yellow)
                 ) {
@@ -462,7 +462,7 @@ fun GameScreen(onStartClick: () -> Unit, board: Board) {
                 Button(
                     onClick = {  },
                     modifier = Modifier.fillMaxWidth(),
-                    colors = ButtonDefaults.buttonColors(backgroundColor = Color.Blue)
+                    colors = ButtonDefaults.buttonColors(backgroundColor = Color.DarkGray)
                 ) {
                     Text("Предложить ничью", fontSize = 23.sp, color = Color.Black, fontWeight = FontWeight.Bold)
                 }
@@ -550,7 +550,8 @@ fun GameScreen(onStartClick: () -> Unit, board: Board) {
                                             .weight(0.2f)
                                             .border(0.15.dp, color = Color.Black)
                                             .wrapContentHeight(align = Alignment.CenterVertically)
-                                            .wrapContentWidth(align = Alignment.CenterHorizontally),
+                                            .wrapContentWidth(align = Alignment.CenterHorizontally)
+                                            .clickable {},
                                         fontSize = 17.sp,
                                         fontWeight = FontWeight.Bold,
                                         textAlign = TextAlign.Center
